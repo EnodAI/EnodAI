@@ -142,11 +142,19 @@ External Sources → Collector (Go) → PostgreSQL + Redis Streams
 
 ## 🚀 Installation
 
+### System Requirements
+
+- **Docker**: 20.10 or higher
+- **Docker Compose**: v2.0 or higher (using `docker compose` command)
+- **RAM**: Minimum 8GB (16GB recommended for Ollama)
+- **Disk**: ~10GB free space (for Docker images and Ollama model)
+- **Time**: First installation takes 20-30 minutes (Ollama model download)
+
 ### Quick Start (Recommended)
 
 ```bash
 # Automated setup script
-git clone https://github.com/your-username/EnodAI.git
+git clone https://github.com/EnodAI/EnodAI.git
 cd EnodAI
 ./scripts/setup.sh
 ```
@@ -163,7 +171,7 @@ make quickstart
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/EnodAI.git
+git clone https://github.com/EnodAI/EnodAI.git
 cd EnodAI
 ```
 
@@ -173,25 +181,27 @@ Docker Compose uses default variables. You can create a `.env` file for customiz
 
 ```bash
 # .env (optional)
-POSTGRES_USER=kam_user
-POSTGRES_PASSWORD=kam_password
-POSTGRES_DB=kam_alerts
+POSTGRES_USER=enod_user
+POSTGRES_PASSWORD=enod_password
+POSTGRES_DB=enod_alerts
 REDIS_ADDR=redis:6379
 OLLAMA_URL=http://ollama:11434
-GRAFANA_ADMIN_PASSWORD=kam_password
+GRAFANA_ADMIN_PASSWORD=enod_password
 ```
+
+> **Note**: Default credentials are secure for development. Change them in production!
 
 ### 3. Start Docker Containers
 
 ```bash
 # Build and start all services
-docker-compose up --build -d
+docker compose up --build -d
 
 # Follow logs
-docker-compose logs -f
+docker compose logs -f
 
 # Follow specific service logs
-docker-compose logs -f ai-service
+docker compose logs -f ai-service
 ```
 
 ### 4. Download Ollama Model
@@ -202,13 +212,16 @@ After the Ollama container starts, download the Llama2 model:
 docker exec -it enodai-ollama-1 ollama pull llama2
 ```
 
-> **First use**: Model download will take a few minutes as it downloads ~4GB of data.
+> **⏱️ Important**:
+> - Model download is ~4GB and takes 10-20 minutes depending on your internet speed
+> - Wait for the download to complete before using AI analysis features
+> - You can skip this step for testing basic metric collection
 
 ### 5. Check Service Status
 
 ```bash
 # Check all container status
-docker-compose ps
+docker compose ps
 
 # Test health checks
 curl http://localhost:8080/health  # Collector
@@ -554,13 +567,13 @@ Monitor service processing status:
 
 ```bash
 # Watch AI Service logs (anomaly detection and LLM analysis)
-docker-compose logs -f ai-service
+docker compose logs -f ai-service
 
 # Watch Collector logs (incoming metrics/alerts)
-docker-compose logs -f collector
+docker compose logs -f collector
 
 # Watch Redis consumer logs
-docker-compose logs -f ai-service | grep "Consumer"
+docker compose logs -f ai-service | grep "Consumer"
 ```
 
 ---
@@ -572,13 +585,13 @@ docker-compose logs -f ai-service | grep "Consumer"
 **Solution:**
 ```bash
 # Stop and clean containers
-docker-compose down -v
+docker compose down -v
 
 # Rebuild
-docker-compose up --build -d
+docker compose up --build -d
 
 # Check logs
-docker-compose logs
+docker compose logs
 ```
 
 ### Problem: PostgreSQL connection error
@@ -588,7 +601,7 @@ docker-compose logs
 **Solution:**
 ```bash
 # Ensure PostgreSQL container is running
-docker-compose ps postgresql
+docker compose ps postgresql
 
 # Check health
 docker exec enodai-postgresql-1 pg_isready -U kam_user
@@ -635,7 +648,7 @@ docker exec enodai-redis-1 redis-cli XINFO STREAM metrics:raw
 **Solution:**
 ```bash
 # Check AI Service logs
-docker-compose logs ai-service | grep "Consumer"
+docker compose logs ai-service | grep "Consumer"
 
 # Manually check Redis stream
 docker exec enodai-redis-1 redis-cli XLEN metrics:raw
@@ -645,7 +658,7 @@ docker exec enodai-redis-1 redis-cli XLEN metrics:raw
 docker exec enodai-redis-1 redis-cli XINFO GROUPS metrics:raw
 
 # Restart AI Service
-docker-compose restart ai-service
+docker compose restart ai-service
 ```
 
 ### Problem: Low performance
@@ -655,7 +668,7 @@ docker-compose restart ai-service
 # Check resource usage
 docker stats
 
-# Allocate more memory for Ollama (docker-compose.yml)
+# Allocate more memory for Ollama (docker compose.yml)
 # deploy.resources.limits.memory: 8G
 
 # Increase PostgreSQL connection pool (ai-service/app/database.py)
@@ -673,27 +686,27 @@ docker stats
 
 ```bash
 # Stop all services (data is preserved)
-docker-compose stop
+docker compose stop
 
 # Restart
-docker-compose start
+docker compose start
 ```
 
 ### Complete Removal
 
 ```bash
 # Remove containers and network (volumes are preserved)
-docker-compose down
+docker compose down
 
 # Remove volumes too (ALL DATA WILL BE DELETED!)
-docker-compose down -v
+docker compose down -v
 ```
 
 ### Restarting Specific Service
 
 ```bash
-docker-compose restart ai-service
-docker-compose restart collector
+docker compose restart ai-service
+docker compose restart collector
 ```
 
 ---
@@ -802,7 +815,7 @@ For details: [k8s/README.md](./k8s/README.md)
 
 ```bash
 # Using production compose
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker compose -f docker compose.yml -f docker compose.prod.yml up -d
 
 # Or using Makefile
 make deploy-prod
