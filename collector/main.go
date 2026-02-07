@@ -194,7 +194,8 @@ func handleMetrics(c *gin.Context) {
 			"ts":   time.Now().Unix(),
 		},
 		// Limit stream size to prevent memory overflow if consumer is slow
-		MaxLenApprox: 10000, 
+		MaxLen: 10000,
+		Approx: true, 
 	}).Err()
 
 	if err != nil {
