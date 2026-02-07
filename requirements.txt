@@ -1,2 +1,0 @@
-# Root requirements placeholder
-# See ai-service/requirements.txt for Python dependencies
