@@ -48,9 +48,10 @@ async def startup_event():
     await Database.connect()
 
     # Initialize rate limiting
-    rate_limit_redis = await create_rate_limit_middleware()
-    if rate_limit_redis:
-        app.add_middleware(RateLimitMiddleware, redis_client=rate_limit_redis)
+    # Note: Rate limit middleware is disabled for now as it requires dynamic initialization
+    # rate_limit_redis = await create_rate_limit_middleware()
+    # if rate_limit_redis:
+    #     app.add_middleware(RateLimitMiddleware, redis_client=rate_limit_redis)
 
     # Start Redis consumer in background
     asyncio.create_task(consumer.start_consuming())

@@ -6,16 +6,16 @@ class Settings(BaseSettings):
     redis_stream: str = "metrics:raw"
     redis_group: str = "ai_service_group"
     
-    postgres_host: str = os.getenv("POSTGRES_HOST", "postgres")
-    postgres_port: str = os.getenv("POSTGRES_PORT", "5432")
-    postgres_user: str = os.getenv("POSTGRES_USER", "kam_user")
-    postgres_password: str = os.getenv("POSTGRES_PASSWORD", "kam_password")
-    postgres_db: str = os.getenv("POSTGRES_DB", "kam_alerts")
+    postgres_host: str = os.getenv("DB_HOST", "postgresql")
+    postgres_port: str = os.getenv("DB_PORT", "5432")
+    postgres_user: str = os.getenv("DB_USER", "enod_user")
+    postgres_password: str = os.getenv("DB_PASSWORD", "enod_password")
+    postgres_db: str = os.getenv("DB_NAME", "enod_alerts")
     
     ollama_host: str = os.getenv("OLLAMA_HOST", "ollama")
     ollama_port: str = os.getenv("OLLAMA_PORT", "11434")
     
-    model_path: str = "/app/models"
+    model_path: str = "/app/models/isolation_forest.joblib"
 
     @property
     def database_url(self) -> str:
