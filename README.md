@@ -905,7 +905,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions:
 - GitHub Issues: [Create an issue](https://github.com/your-username/EnodAI/issues)
-- Email: support@enodai.dev
+- Email: support@enodai.com
 
 ---
 
@@ -916,3 +916,4 @@ For questions:
 Made with ❤️ by EnodAI Team
 
 </div>
+
