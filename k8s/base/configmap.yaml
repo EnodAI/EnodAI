@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sensusai-config
+  namespace: sensusai
+data:
+  DB_HOST: "postgresql"
+  DB_PORT: "5432"
+  DB_USER: "sensus_user"
+  DB_NAME: "sensus_alerts"
+  REDIS_ADDR: "redis:6379"
+  REDIS_URL: "redis://redis:6379"
+  OLLAMA_HOST: "ollama"
+  OLLAMA_PORT: "11434"
+  OLLAMA_URL: "http://ollama:11434"

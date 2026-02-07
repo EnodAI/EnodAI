@@ -1,0 +1,183 @@
+groups:
+  - name: sensusai_alerts
+    interval: 30s
+    rules:
+      # Service Health Alerts
+      - alert: CollectorServiceDown
+        expr: up{job="collector"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: collector
+        annotations:
+          summary: "Collector service is down"
+          description: "The collector service has been down for more than 1 minute."
+
+      - alert: AIServiceDown
+        expr: up{job="ai-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-service
+        annotations:
+          summary: "AI service is down"
+          description: "The AI service has been down for more than 1 minute."
+
+      # Performance Alerts
+      - alert: HighRequestLatency
+        expr: histogram_quantile(0.95, rate(sensus_processing_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          type: performance
+        annotations:
+          summary: "High request latency detected"
+          description: "95th percentile latency is above 1 second for 5 minutes. Current value: {{ $value }}s"
+
+      - alert: VeryHighRequestLatency
+        expr: histogram_quantile(0.95, rate(sensus_processing_duration_seconds_bucket[5m])) > 5
+        for: 2m
+        labels:
+          severity: critical
+          type: performance
+        annotations:
+          summary: "Very high request latency detected"
+          description: "95th percentile latency is above 5 seconds. Current value: {{ $value }}s"
+
+      # Traffic Alerts
+      - alert: HighAlertVolume
+        expr: rate(sensus_alerts_received_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          type: traffic
+        annotations:
+          summary: "High alert volume detected"
+          description: "Receiving more than 10 alerts per second for 5 minutes. Current rate: {{ $value }}/s"
+
+      - alert: NoAlertsReceived
+        expr: rate(sensus_alerts_received_total[10m]) == 0
+        for: 30m
+        labels:
+          severity: warning
+          type: traffic
+        annotations:
+          summary: "No alerts received"
+          description: "No alerts have been received for 30 minutes. This might indicate a problem with the alerting pipeline."
+
+      - alert: HighMetricVolume
+        expr: rate(sensus_metrics_received_total[5m]) > 100
+        for: 10m
+        labels:
+          severity: warning
+          type: traffic
+        annotations:
+          summary: "High metric volume detected"
+          description: "Receiving more than 100 metrics per second for 10 minutes. Current rate: {{ $value }}/s"
+
+      # System Resource Alerts
+      - alert: HighMemoryUsage
+        expr: (container_memory_usage_bytes{container="sensusai-ai-service-1"} / container_spec_memory_limit_bytes{container="sensusai-ai-service-1"}) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          type: resources
+          service: ai-service
+        annotations:
+          summary: "High memory usage in AI service"
+          description: "AI service memory usage is above 90% for 5 minutes. Current: {{ $value | humanizePercentage }}"
+
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{container="sensusai-ai-service-1"}[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          type: resources
+          service: ai-service
+        annotations:
+          summary: "High CPU usage in AI service"
+          description: "AI service CPU usage is above 80% for 10 minutes."
+
+  - name: database_alerts
+    interval: 30s
+    rules:
+      # Database Connection Alerts
+      - alert: PostgreSQLDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgresql
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 1 minute."
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been down for more than 1 minute."
+
+      # Database Performance
+      - alert: SlowDatabaseQueries
+        expr: rate(sensus_processing_duration_seconds_sum[5m]) / rate(sensus_processing_duration_seconds_count[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          type: performance
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Average query time is above 0.5 seconds."
+
+  - name: anomaly_detection_alerts
+    interval: 1m
+    rules:
+      # Anomaly Detection Alerts
+      - alert: HighAnomalyRate
+        expr: (sum(rate(sensus_anomalies_detected_total[10m])) / sum(rate(sensus_metrics_received_total[10m]))) > 0.1
+        for: 15m
+        labels:
+          severity: warning
+          type: ml
+        annotations:
+          summary: "High anomaly detection rate"
+          description: "More than 10% of metrics are flagged as anomalies for 15 minutes. This might indicate a systemic issue."
+
+      - alert: NoAnomaliesDetected
+        expr: rate(sensus_anomalies_detected_total[1h]) == 0
+        for: 6h
+        labels:
+          severity: info
+          type: ml
+        annotations:
+          summary: "No anomalies detected"
+          description: "No anomalies have been detected for 6 hours. Model might need retraining or data distribution has changed."
+
+  - name: llm_analysis_alerts
+    interval: 1m
+    rules:
+      # LLM Service Alerts
+      - alert: OllamaServiceDown
+        expr: up{job="ollama"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          service: ollama
+        annotations:
+          summary: "Ollama LLM service is down"
+          description: "Ollama service has been down for more than 2 minutes. Alert analysis will be unavailable."
+
+      - alert: HighLLMResponseTime
+        expr: rate(llm_response_duration_seconds_sum[5m]) / rate(llm_response_duration_seconds_count[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          type: performance
+          service: ollama
+        annotations:
+          summary: "High LLM response time"
+          description: "Average LLM response time is above 10 seconds."

@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  postgresql:
+    image: postgres:15-alpine
+    container_name: sensusai-postgresql-1
+    environment:
+      POSTGRES_USER: sensus_user
+      POSTGRES_PASSWORD: sensus_password
+      POSTGRES_DB: sensus_alerts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sensus_user -d sensus_alerts"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sensus-net
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    container_name: sensusai-redis-1
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sensus-net
+    restart: always
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sensusai-ollama-1
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - sensus-net
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+    restart: unless-stopped
+
+  collector:
+    build: ./collector
+    container_name: sensusai-collector-1
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgresql
+      - DB_USER=sensus_user
+      - DB_PASSWORD=sensus_password
+      - DB_NAME=sensus_alerts
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sensus-net
+    restart: on-failure
+
+  ai-service:
+    build: ./ai-service
+    container_name: sensusai-ai-service-1
+    ports:
+      - "8082:8082"
+    environment:
+      - DB_HOST=postgresql
+      - DB_USER=sensus_user
+      - DB_PASSWORD=sensus_password
+      - DB_NAME=sensus_alerts
+      - REDIS_ADDR=redis
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    networks:
+      - sensus-net
+    restart: on-failure
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sensusai-prometheus-1
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - sensus-net
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sensusai-grafana-1
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=sensus_password
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - sensus-net
+    restart: always
+
+networks:
+  sensus-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  ollama_data:
+  prometheus_data:
+  grafana_data:
