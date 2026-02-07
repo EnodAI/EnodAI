@@ -1,6 +1,6 @@
 # Deployment Guide
 
-Complete guide for deploying SensusAI to various environments.
+Complete guide for deploying EnodAI to various environments.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
@@ -37,7 +37,7 @@ make quickstart
 
 # Or manually
 docker-compose up -d
-docker exec sensusai-ollama-1 ollama pull llama2
+docker exec enodai-ollama-1 ollama pull llama2
 ```
 
 ### Production
@@ -79,18 +79,18 @@ POSTGRES_MAX_CONNECTIONS=100
 kubectl apply -f k8s/base/
 
 # Check status
-kubectl get pods -n sensusai
-kubectl get svc -n sensusai
+kubectl get pods -n enodai
+kubectl get svc -n enodai
 ```
 
 ### Production Deploy
 
 1. **Create secrets**:
 ```bash
-kubectl create secret generic sensusai-secrets \
+kubectl create secret generic enodai-secrets \
   --from-literal=POSTGRES_PASSWORD=$(openssl rand -base64 32) \
   --from-literal=JWT_SECRET_KEY=$(openssl rand -hex 32) \
-  -n sensusai
+  -n enodai
 ```
 
 2. **Apply resources**:
@@ -108,10 +108,10 @@ kubectl apply -f k8s/base/ingress.yaml
 
 ```bash
 # Manual
-kubectl scale deployment collector -n sensusai --replicas=5
+kubectl scale deployment collector -n enodai --replicas=5
 
 # Auto-scaling (already configured via HPA)
-kubectl get hpa -n sensusai
+kubectl get hpa -n enodai
 ```
 
 ---
@@ -126,7 +126,7 @@ aws ecs register-task-definition --cli-input-json file://ecs/collector-task.json
 aws ecs register-task-definition --cli-input-json file://ecs/ai-service-task.json
 
 # Create service
-aws ecs create-service --cluster sensusai --service-name collector --task-definition collector:1
+aws ecs create-service --cluster enodai --service-name collector --task-definition collector:1
 ```
 
 ### Google Cloud Run
@@ -145,9 +145,9 @@ gcloud run deploy ai-service --image gcr.io/PROJECT/ai-service --region us-centr
 
 ```bash
 az container create \
-  --resource-group sensusai-rg \
+  --resource-group enodai-rg \
   --name collector \
-  --image sensusai/collector:latest \
+  --image enodai/collector:latest \
   --ports 8080 \
   --environment-variables DB_HOST=... DB_USER=...
 ```
@@ -183,7 +183,7 @@ services:
 
 **HashiCorp Vault**:
 ```bash
-vault kv put secret/sensusai \
+vault kv put secret/enodai \
   postgres_password=$POSTGRES_PASSWORD \
   jwt_secret=$JWT_SECRET_KEY
 ```
@@ -191,7 +191,7 @@ vault kv put secret/sensusai \
 **AWS Secrets Manager**:
 ```bash
 aws secretsmanager create-secret \
-  --name sensusai/postgres \
+  --name enodai/postgres \
   --secret-string '{"password":"..."}'
 ```
 
@@ -229,7 +229,7 @@ groups:
 # Import pre-built dashboard
 curl -X POST http://admin:kam_password@localhost:3000/api/dashboards/import \
   -H "Content-Type: application/json" \
-  -d @grafana/provisioning/dashboards/sensus-overview.json
+  -d @grafana/provisioning/dashboards/enod-overview.json
 ```
 
 ### Logging
@@ -269,7 +269,7 @@ jaeger_exporter = JaegerExporter(
 0 2 * * * /path/to/scripts/backup.sh
 
 # S3 backup
-aws s3 cp backups/backup_latest.sql.gz s3://sensusai-backups/
+aws s3 cp backups/backup_latest.sql.gz s3://enodai-backups/
 ```
 
 ### Disaster Recovery
@@ -324,10 +324,10 @@ uvicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
 **Database connection timeout**:
 ```bash
 # Check connectivity
-docker exec sensusai-postgresql-1 pg_isready -U kam_user
+docker exec enodai-postgresql-1 pg_isready -U kam_user
 
 # Check logs
-docker logs sensusai-postgresql-1
+docker logs enodai-postgresql-1
 ```
 
 **High memory usage**:
@@ -372,8 +372,8 @@ git checkout previous-version
 docker-compose up -d
 
 # Kubernetes
-kubectl rollout undo deployment/collector -n sensusai
-kubectl rollout status deployment/collector -n sensusai
+kubectl rollout undo deployment/collector -n enodai
+kubectl rollout status deployment/collector -n enodai
 ```
 
 ---

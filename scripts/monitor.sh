@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SensusAI Monitoring Script
+# EnodAI Monitoring Script
 # Continuously monitors service health and logs
 
 # Colors
@@ -13,7 +13,7 @@ NC='\033[0m'
 clear
 
 echo -e "${BLUE}================================${NC}"
-echo -e "${BLUE}  SensusAI Service Monitor${NC}"
+echo -e "${BLUE}  EnodAI Service Monitor${NC}"
 echo -e "${BLUE}================================${NC}"
 echo ""
 

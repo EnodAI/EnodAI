@@ -9,7 +9,7 @@ NC := \033[0m # No Color
 # Variables
 DOCKER_COMPOSE := docker-compose
 DOCKER_COMPOSE_PROD := docker-compose -f docker-compose.yml -f docker-compose.prod.yml
-PROJECT_NAME := sensusai
+PROJECT_NAME := enodai
 
 help: ## Show this help message
 	@echo "$(GREEN)KamAlertAI - Makefile Commands$(NC)"

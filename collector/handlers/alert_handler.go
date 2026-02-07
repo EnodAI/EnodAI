@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"sensusai/collector/database"
-	"sensusai/collector/models"
+	"enodai/collector/database"
+	"enodai/collector/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

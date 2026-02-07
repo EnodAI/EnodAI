@@ -134,7 +134,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - GF_INSTALL_PLUGINS=grafana-piechart-panel
-      - GF_SERVER_ROOT_URL=https://grafana.sensusai.example.com
+      - GF_SERVER_ROOT_URL=https://grafana.enodai.example.com
       - GF_SECURITY_COOKIE_SECURE=true
       - GF_SECURITY_COOKIE_SAMESITE=strict
       - GF_SERVER_ENABLE_GZIP=true
@@ -154,7 +154,7 @@ services:
 
 # Production-specific network configuration
 networks:
-  sensus-net:
+  enod-net:
     driver: bridge
     ipam:
       config:
@@ -167,32 +167,32 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /var/lib/sensusai/postgres
+      device: /var/lib/enodai/postgres
 
   redis_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /var/lib/sensusai/redis
+      device: /var/lib/enodai/redis
 
   ollama_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /var/lib/sensusai/ollama
+      device: /var/lib/enodai/ollama
 
   prometheus_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /var/lib/sensusai/prometheus
+      device: /var/lib/enodai/prometheus
 
   grafana_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /var/lib/sensusai/grafana
+      device: /var/lib/enodai/grafana

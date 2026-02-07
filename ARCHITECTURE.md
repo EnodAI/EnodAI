@@ -1,29 +1,29 @@
-# SensusAI - Sistem Mimarisi
+# EnodAI - System Architecture
 
-## 📋 İçindekiler
-1. [Genel Bakış](#genel-bakış)
-2. [Mimari Diyagram](#mimari-diyagram)
-3. [Servis Detayları](#servis-detayları)
-4. [Veri Akışı](#veri-akışı)
-5. [Teknoloji Stack](#teknoloji-stack)
-6. [Veritabanı Şeması](#veritabanı-şeması)
-7. [Performans Optimizasyonları](#performans-optimizasyonları)
-8. [Güvenlik](#güvenlik)
-9. [Ölçeklenebilirlik](#ölçeklenebilirlik)
+## 📋 Table of Contents
+1. [Overview](#overview)
+2. [Architecture Diagram](#architecture-diagram)
+3. [Service Details](#service-details)
+4. [Data Flow](#data-flow)
+5. [Technology Stack](#technology-stack)
+6. [Database Schema](#database-schema)
+7. [Performance Optimizations](#performance-optimizations)
+8. [Security](#security)
+9. [Scalability](#scalability)
 
 ---
 
-## Genel Bakış
+## Overview
 
-SensusAI, **mikroservis mimarisine** dayalı, yüksek performanslı bir sistem izleme ve anomali tespit platformudur. Prometheus AlertManager'dan gelen uyarıları ve metrik verilerini toplar, makine öğrenmesi ile anomali tespiti yapar ve LLM (Large Language Model) kullanarak kök neden analizi gerçekleştirir.
+EnodAI is a high-performance system monitoring and anomaly detection platform based on **microservices architecture**. It collects alerts and metric data from Prometheus AlertManager, performs anomaly detection using machine learning, and executes root cause analysis using LLM (Large Language Model).
 
-### Temel Özellikler
-- ✅ Real-time metrik ve alert toplama
-- ✅ Makine öğrenmesi ile anomali tespiti (Isolation Forest)
-- ✅ LLM destekli kök neden analizi (Ollama/Llama2)
-- ✅ Yüksek performanslı veri işleme (Redis Streams)
-- ✅ Ölçeklenebilir mikroservis mimarisi
-- ✅ Prometheus metrikleri ve Grafana dashboards
+### Key Features
+- ✅ Real-time metric and alert collection
+- ✅ Machine learning-based anomaly detection (Isolation Forest)
+- ✅ LLM-powered root cause analysis (Ollama/Llama2)
+- ✅ High-performance data processing (Redis Streams)
+- ✅ Scalable microservices architecture
+- ✅ Prometheus metrics and Grafana dashboards
 - ✅ Container orchestration (Docker Compose & Kubernetes)
 - ✅ JWT Authentication & Rate Limiting
 - ✅ Automated Testing (80%+ coverage)
@@ -32,7 +32,7 @@ SensusAI, **mikroservis mimarisine** dayalı, yüksek performanslı bir sistem i
 
 ---
 
-## Mimari Diyagram
+## Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -86,17 +86,17 @@ SensusAI, **mikroservis mimarisine** dayalı, yüksek performanslı bir sistem i
 
 ---
 
-## Servis Detayları
+## Service Details
 
 ### 1. Collector Service (Go)
 
-**Sorumluluklar:**
-- HTTP endpoint'ler aracılığıyla metrik ve alert toplama
-- PostgreSQL'e veri persistance
-- Redis Streams'e mesaj publish etme
-- Prometheus metrikleri expose etme
+**Responsibilities:**
+- Collecting metrics and alerts via HTTP endpoints
+- Data persistence to PostgreSQL
+- Publishing messages to Redis Streams
+- Exposing Prometheus metrics
 
-**Teknolojiler:**
+**Technologies:**
 - **Language**: Go 1.21
 - **Framework**: Gin (Web framework)
 - **Database**: pgx/v5 (PostgreSQL driver)
@@ -107,11 +107,11 @@ SensusAI, **mikroservis mimarisine** dayalı, yüksek performanslı bir sistem i
 ```
 GET  /health                      - Health check endpoint
 GET  /metrics                     - Prometheus metrics
-POST /api/v1/metrics              - Metrik toplama
-POST /api/v1/alerts               - Alert toplama
-POST /api/v1/auth/token           - JWT token alma (Yeni!)
-GET  /api/v1/auth/me              - Kullanıcı bilgisi (Yeni!)
-GET  /api/v1/analysis/latest      - Son analiz sonuçları
+POST /api/v1/metrics              - Metric collection
+POST /api/v1/alerts               - Alert collection
+POST /api/v1/auth/token           - JWT token acquisition (New!)
+GET  /api/v1/auth/me              - User information (New!)
+GET  /api/v1/analysis/latest      - Latest analysis results
 GET  /docs                        - API documentation
 ```
 
@@ -140,14 +140,14 @@ collector/
 
 ### 2. AI Service (Python)
 
-**Sorumluluklar:**
-- Redis Streams'den mesaj consume etme
-- Anomali tespiti (Isolation Forest ML modeli)
-- LLM ile kök neden analizi
-- Analiz sonuçlarını database'e kaydetme
-- REST API (analiz sonuçlarını sorgulamak için)
+**Responsibilities:**
+- Consuming messages from Redis Streams
+- Anomaly detection (Isolation Forest ML model)
+- Root cause analysis with LLM
+- Saving analysis results to database
+- REST API (for querying analysis results)
 
-**Teknolojiler:**
+**Technologies:**
 - **Language**: Python 3.11
 - **Framework**: FastAPI
 - **Database**: asyncpg (Async PostgreSQL)
@@ -159,7 +159,7 @@ collector/
 **Endpoints:**
 ```
 GET /health                      - Health check
-GET /api/v1/analysis/latest      - Son analiz sonuçları
+GET /api/v1/analysis/latest      - Latest analysis results
 ```
 
 **Components:**
@@ -241,7 +241,7 @@ ai-service/
 
 **Version**: 15-alpine
 
-**Tablolar:**
+**Tables:**
 
 #### metrics
 ```sql
@@ -394,9 +394,9 @@ Provide a JSON response with:
 - Ollama (11434)
 
 **Metrics Collected:**
-- `sensus_alerts_received_total` - Total alerts received
-- `sensus_metrics_received_total` - Total metrics received
-- `sensus_processing_duration_seconds` - Request processing time
+- `enod_alerts_received_total` - Total alerts received
+- `enod_metrics_received_total` - Total metrics received
+- `enod_processing_duration_seconds` - Request processing time
 
 **Alert Rules** (`prometheus/alert_rules.yml`):
 - **Service Health**: CollectorDown, AIServiceDown, PostgreSQLDown, RedisDown
@@ -424,7 +424,7 @@ Provide a JSON response with:
 
 **Pre-configured Dashboards:**
 
-#### SensusAI Overview (`sensus-overview.json`)
+#### EnodAI Overview (`enod-overview.json`)
 Auto-provisioned dashboard with:
 - **Total Alerts Received** (stat panel)
 - **Total Metrics Received** (stat panel)
@@ -438,9 +438,9 @@ Panels update automatically every 30 seconds.
 
 ---
 
-## Veri Akışı
+## Data Flow
 
-### Metrik İşleme Akışı
+### Metric Processing Flow
 
 ```
 1. Application Metrics → Collector Service
@@ -469,7 +469,7 @@ Panels update automatically every 30 seconds.
 7. Grafana/Prometheus → Visualization
 ```
 
-### Alert İşleme Akışı
+### Alert Processing Flow
 
 ```
 1. Prometheus AlertManager → Collector Service
@@ -508,7 +508,7 @@ Panels update automatically every 30 seconds.
 
 ---
 
-## Teknoloji Stack
+## Technology Stack
 
 ### Backend Services
 | Component | Technology | Version | Purpose |
@@ -551,7 +551,7 @@ Panels update automatically every 30 seconds.
 
 ---
 
-## Performans Optimizasyonları
+## Performance Optimizations
 
 ### Database Level
 
@@ -628,7 +628,7 @@ Panels update automatically every 30 seconds.
 
 ---
 
-## Güvenlik
+## Security
 
 ### Network Security
 - Internal Docker bridge network
@@ -696,7 +696,7 @@ curl -H "Authorization: Bearer <token>" http://localhost:8082/api/v1/analysis/la
 
 ---
 
-## Ölçeklenebilirlik
+## Scalability
 
 ### Horizontal Scaling
 
@@ -798,7 +798,7 @@ Suitable for: Development, small-scale production
 
 ---
 
-## Bakım ve Operasyon
+## Maintenance and Operations
 
 ### Backup Strategy
 - PostgreSQL: Daily automated backups
@@ -817,7 +817,7 @@ Suitable for: Development, small-scale production
 
 ---
 
-## Gelecek İyileştirmeler
+## Future Improvements
 
 ### Short-term
 - [ ] Add unit and integration tests (>80% coverage)
@@ -842,7 +842,7 @@ Suitable for: Development, small-scale production
 
 ---
 
-## Kaynaklar
+## Resources
 
 ### Documentation
 - [Go Gin Framework](https://gin-gonic.com/)
@@ -859,6 +859,6 @@ Suitable for: Development, small-scale production
 
 ---
 
-**Versiyon**: 1.0
-**Son Güncelleme**: 2024-02-07
-**Yazar**: SensusAI Development Team
+**Version**: 1.0
+**Last Updated**: 2024-02-07
+**Author**: EnodAI Development Team

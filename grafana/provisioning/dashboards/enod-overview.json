@@ -60,7 +60,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sensus_alerts_received_total",
+          "expr": "enod_alerts_received_total",
           "refId": "A"
         }
       ],
@@ -109,7 +109,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "sensus_metrics_received_total",
+          "expr": "enod_metrics_received_total",
           "refId": "A"
         }
       ],
@@ -177,12 +177,12 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "rate(sensus_alerts_received_total[5m])",
+          "expr": "rate(enod_alerts_received_total[5m])",
           "legendFormat": "Alert Rate",
           "refId": "A"
         },
         {
-          "expr": "rate(sensus_metrics_received_total[5m])",
+          "expr": "rate(enod_metrics_received_total[5m])",
           "legendFormat": "Metric Rate",
           "refId": "B"
         }
@@ -259,12 +259,12 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(sensus_processing_duration_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.95, rate(enod_processing_duration_seconds_bucket[5m]))",
           "legendFormat": "95th Percentile",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.99, rate(sensus_processing_duration_seconds_bucket[5m]))",
+          "expr": "histogram_quantile(0.99, rate(enod_processing_duration_seconds_bucket[5m]))",
           "legendFormat": "99th Percentile",
           "refId": "B"
         }
@@ -276,7 +276,7 @@
   "refresh": "30s",
   "schemaVersion": 27,
   "style": "dark",
-  "tags": ["sensusai", "overview"],
+  "tags": ["enodai", "overview"],
   "templating": {
     "list": []
   },
@@ -286,7 +286,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "SensusAI - Overview",
-  "uid": "sensusai-overview",
+  "title": "EnodAI - Overview",
+  "uid": "enodai-overview",
   "version": 1
 }

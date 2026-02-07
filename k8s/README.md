@@ -1,6 +1,6 @@
 # Kubernetes Deployment
 
-This directory contains Kubernetes manifests for deploying SensusAI.
+This directory contains Kubernetes manifests for deploying EnodAI.
 
 ## Structure
 
@@ -39,7 +39,7 @@ kubectl apply -f base/namespace.yaml
 kubectl apply -f base/
 
 # Check deployment status
-kubectl get pods -n sensusai
+kubectl get pods -n enodai
 ```
 
 ### Using Kustomize
@@ -58,10 +58,10 @@ kubectl apply -k overlays/prod/
 
 ```bash
 # Scale collector
-kubectl scale deployment collector -n sensusai --replicas=5
+kubectl scale deployment collector -n enodai --replicas=5
 
 # Scale AI service
-kubectl scale deployment ai-service -n sensusai --replicas=3
+kubectl scale deployment ai-service -n enodai --replicas=3
 ```
 
 ### Auto-scaling
@@ -74,16 +74,16 @@ HorizontalPodAutoscalers are automatically configured:
 
 ```bash
 # View logs
-kubectl logs -f -n sensusai deployment/collector
-kubectl logs -f -n sensusai deployment/ai-service
+kubectl logs -f -n enodai deployment/collector
+kubectl logs -f -n enodai deployment/ai-service
 
 # Port-forward for local access
-kubectl port-forward -n sensusai svc/collector 8080:8080
-kubectl port-forward -n sensusai svc/ai-service 8082:8082
-kubectl port-forward -n sensusai svc/grafana 3000:3000
+kubectl port-forward -n enodai svc/collector 8080:8080
+kubectl port-forward -n enodai svc/ai-service 8082:8082
+kubectl port-forward -n enodai svc/grafana 3000:3000
 
 # Check resource usage
-kubectl top pods -n sensusai
+kubectl top pods -n enodai
 ```
 
 ## Secrets Management
@@ -97,10 +97,10 @@ For production, use one of:
 
 Example with kubectl:
 ```bash
-kubectl create secret generic sensusai-secrets \
+kubectl create secret generic enodai-secrets \
   --from-literal=POSTGRES_PASSWORD=<strong-password> \
   --from-literal=JWT_SECRET_KEY=<random-key> \
-  -n sensusai
+  -n enodai
 ```
 
 ## Persistence
@@ -140,26 +140,26 @@ spec:
 
 ### Pods not starting
 ```bash
-kubectl describe pod <pod-name> -n sensusai
-kubectl logs <pod-name> -n sensusai
+kubectl describe pod <pod-name> -n enodai
+kubectl logs <pod-name> -n enodai
 ```
 
 ### Service not accessible
 ```bash
-kubectl get svc -n sensusai
-kubectl get endpoints -n sensusai
+kubectl get svc -n enodai
+kubectl get endpoints -n enodai
 ```
 
 ### Database connection issues
 ```bash
-kubectl exec -it postgresql-0 -n sensusai -- psql -U kam_user -d kam_alerts
+kubectl exec -it postgresql-0 -n enodai -- psql -U kam_user -d kam_alerts
 ```
 
 ## Cleanup
 
 ```bash
 # Delete all resources
-kubectl delete namespace sensusai
+kubectl delete namespace enodai
 
 # Or delete specific resources
 kubectl delete -f base/

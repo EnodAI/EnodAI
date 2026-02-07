@@ -13,14 +13,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="SensusAI AI Service",
+    title="EnodAI AI Service",
     description="AI-powered anomaly detection and alert analysis service",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
     contact={
-        "name": "SensusAI Team",
-        "email": "support@sensusai.dev",
+        "name": "EnodAI Team",
+        "email": "support@enodai.dev",
     },
     license_info={
         "name": "MIT",

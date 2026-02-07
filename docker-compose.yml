@@ -3,28 +3,28 @@ version: '3.8'
 services:
   postgresql:
     image: postgres:15-alpine
-    container_name: sensusai-postgresql-1
+    container_name: enodai-postgresql-1
     environment:
-      POSTGRES_USER: sensus_user
-      POSTGRES_PASSWORD: sensus_password
-      POSTGRES_DB: sensus_alerts
+      POSTGRES_USER: enod_user
+      POSTGRES_PASSWORD: enod_password
+      POSTGRES_DB: enod_alerts
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sensus_user -d sensus_alerts"]
+      test: ["CMD-SHELL", "pg_isready -U enod_user -d enod_alerts"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - sensus-net
+      - enod-net
     restart: always
 
   redis:
     image: redis:7-alpine
-    container_name: sensusai-redis-1
+    container_name: enodai-redis-1
     ports:
       - "6379:6379"
     volumes:
@@ -35,18 +35,18 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - sensus-net
+      - enod-net
     restart: always
 
   ollama:
     image: ollama/ollama:latest
-    container_name: sensusai-ollama-1
+    container_name: enodai-ollama-1
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     networks:
-      - sensus-net
+      - enod-net
     deploy:
       resources:
         limits:
@@ -55,14 +55,14 @@ services:
 
   collector:
     build: ./collector
-    container_name: sensusai-collector-1
+    container_name: enodai-collector-1
     ports:
       - "8080:8080"
     environment:
       - DB_HOST=postgresql
-      - DB_USER=sensus_user
-      - DB_PASSWORD=sensus_password
-      - DB_NAME=sensus_alerts
+      - DB_USER=enod_user
+      - DB_PASSWORD=enod_password
+      - DB_NAME=enod_alerts
       - REDIS_ADDR=redis:6379
     depends_on:
       postgresql:
@@ -70,19 +70,19 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - sensus-net
+      - enod-net
     restart: on-failure
 
   ai-service:
     build: ./ai-service
-    container_name: sensusai-ai-service-1
+    container_name: enodai-ai-service-1
     ports:
       - "8082:8082"
     environment:
       - DB_HOST=postgresql
-      - DB_USER=sensus_user
-      - DB_PASSWORD=sensus_password
-      - DB_NAME=sensus_alerts
+      - DB_USER=enod_user
+      - DB_PASSWORD=enod_password
+      - DB_NAME=enod_alerts
       - REDIS_ADDR=redis
       - OLLAMA_URL=http://ollama:11434
     depends_on:
@@ -93,12 +93,12 @@ services:
       ollama:
         condition: service_started
     networks:
-      - sensus-net
+      - enod-net
     restart: on-failure
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: sensusai-prometheus-1
+    container_name: enodai-prometheus-1
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -112,27 +112,27 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - sensus-net
+      - enod-net
     restart: always
 
   grafana:
     image: grafana/grafana:latest
-    container_name: sensusai-grafana-1
+    container_name: enodai-grafana-1
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=sensus_password
+      - GF_SECURITY_ADMIN_PASSWORD=enod_password
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
     networks:
-      - sensus-net
+      - enod-net
     restart: always
 
 networks:
-  sensus-net:
+  enod-net:
     driver: bridge
 
 volumes:

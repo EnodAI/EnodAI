@@ -1,5 +1,5 @@
 groups:
-  - name: sensusai_alerts
+  - name: enodai_alerts
     interval: 30s
     rules:
       # Service Health Alerts
@@ -25,7 +25,7 @@ groups:
 
       # Performance Alerts
       - alert: HighRequestLatency
-        expr: histogram_quantile(0.95, rate(sensus_processing_duration_seconds_bucket[5m])) > 1
+        expr: histogram_quantile(0.95, rate(enod_processing_duration_seconds_bucket[5m])) > 1
         for: 5m
         labels:
           severity: warning
@@ -35,7 +35,7 @@ groups:
           description: "95th percentile latency is above 1 second for 5 minutes. Current value: {{ $value }}s"
 
       - alert: VeryHighRequestLatency
-        expr: histogram_quantile(0.95, rate(sensus_processing_duration_seconds_bucket[5m])) > 5
+        expr: histogram_quantile(0.95, rate(enod_processing_duration_seconds_bucket[5m])) > 5
         for: 2m
         labels:
           severity: critical
@@ -46,7 +46,7 @@ groups:
 
       # Traffic Alerts
       - alert: HighAlertVolume
-        expr: rate(sensus_alerts_received_total[5m]) > 10
+        expr: rate(enod_alerts_received_total[5m]) > 10
         for: 5m
         labels:
           severity: warning
@@ -56,7 +56,7 @@ groups:
           description: "Receiving more than 10 alerts per second for 5 minutes. Current rate: {{ $value }}/s"
 
       - alert: NoAlertsReceived
-        expr: rate(sensus_alerts_received_total[10m]) == 0
+        expr: rate(enod_alerts_received_total[10m]) == 0
         for: 30m
         labels:
           severity: warning
@@ -66,7 +66,7 @@ groups:
           description: "No alerts have been received for 30 minutes. This might indicate a problem with the alerting pipeline."
 
       - alert: HighMetricVolume
-        expr: rate(sensus_metrics_received_total[5m]) > 100
+        expr: rate(enod_metrics_received_total[5m]) > 100
         for: 10m
         labels:
           severity: warning
@@ -77,7 +77,7 @@ groups:
 
       # System Resource Alerts
       - alert: HighMemoryUsage
-        expr: (container_memory_usage_bytes{container="sensusai-ai-service-1"} / container_spec_memory_limit_bytes{container="sensusai-ai-service-1"}) > 0.9
+        expr: (container_memory_usage_bytes{container="enodai-ai-service-1"} / container_spec_memory_limit_bytes{container="enodai-ai-service-1"}) > 0.9
         for: 5m
         labels:
           severity: warning
@@ -88,7 +88,7 @@ groups:
           description: "AI service memory usage is above 90% for 5 minutes. Current: {{ $value | humanizePercentage }}"
 
       - alert: HighCPUUsage
-        expr: rate(container_cpu_usage_seconds_total{container="sensusai-ai-service-1"}[5m]) > 0.8
+        expr: rate(container_cpu_usage_seconds_total{container="enodai-ai-service-1"}[5m]) > 0.8
         for: 10m
         labels:
           severity: warning
@@ -124,7 +124,7 @@ groups:
 
       # Database Performance
       - alert: SlowDatabaseQueries
-        expr: rate(sensus_processing_duration_seconds_sum[5m]) / rate(sensus_processing_duration_seconds_count[5m]) > 0.5
+        expr: rate(enod_processing_duration_seconds_sum[5m]) / rate(enod_processing_duration_seconds_count[5m]) > 0.5
         for: 5m
         labels:
           severity: warning
@@ -138,7 +138,7 @@ groups:
     rules:
       # Anomaly Detection Alerts
       - alert: HighAnomalyRate
-        expr: (sum(rate(sensus_anomalies_detected_total[10m])) / sum(rate(sensus_metrics_received_total[10m]))) > 0.1
+        expr: (sum(rate(sensus_anomalies_detected_total[10m])) / sum(rate(enod_metrics_received_total[10m]))) > 0.1
         for: 15m
         labels:
           severity: warning

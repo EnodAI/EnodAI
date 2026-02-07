@@ -1,6 +1,6 @@
-# Contributing to SensusAI
+# Contributing to EnodAI
 
-Thank you for your interest in contributing to SensusAI! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to EnodAI! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -13,8 +13,8 @@ Thank you for your interest in contributing to SensusAI! This document provides 
 1. **Fork the repository**
 2. **Clone your fork**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/SensusAI.git
-   cd SensusAI
+   git clone https://github.com/YOUR_USERNAME/EnodAI.git
+   cd EnodAI
    ```
 
 3. **Set up development environment**
@@ -114,7 +114,7 @@ Describe testing done
 ## Project Structure
 
 ```
-SensusAI/
+EnodAI/
 ├── collector/          # Go service
 │   ├── main.go
 │   └── main_test.go

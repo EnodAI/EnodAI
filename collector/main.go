@@ -23,15 +23,15 @@ var (
 	
 	// Prometheus Metrics
 	alertsReceived = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "sensus_alerts_received_total",
+		Name: "enod_alerts_received_total",
 		Help: "Total number of alerts received",
 	})
 	metricsReceived = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "sensus_metrics_received_total",
+		Name: "enod_metrics_received_total",
 		Help: "Total number of metrics received",
 	})
 	processingDuration = prometheus.NewHistogram(prometheus.HistogramOpts{
-		Name:    "sensus_processing_duration_seconds",
+		Name:    "enod_processing_duration_seconds",
 		Help:    "Time taken to process requests",
 		Buckets: prometheus.DefBuckets,
 	})

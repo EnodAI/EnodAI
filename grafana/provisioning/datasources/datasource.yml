@@ -10,9 +10,9 @@ datasources:
   - name: PostgreSQL
     type: postgres
     url: postgresql:5432
-    database: sensus_alerts
-    user: sensus_user
+    database: enod_alerts
+    user: enod_user
     secureJsonData:
-      password: sensus_password
+      password: enod_password
     jsonData:
       sslmode: "disable"

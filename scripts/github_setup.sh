@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# GitHub Setup Script for SensusAI
+# GitHub Setup Script for EnodAI
 # This script initializes git and helps push to GitHub
 
 set -e
@@ -13,7 +13,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 echo -e "${BLUE}================================${NC}"
-echo -e "${BLUE}  SensusAI GitHub Setup${NC}"
+echo -e "${BLUE}  EnodAI GitHub Setup${NC}"
 echo -e "${BLUE}================================${NC}"
 echo ""
 
@@ -46,11 +46,11 @@ if [ -z "$GITHUB_USERNAME" ]; then
     exit 1
 fi
 
-# Get repository name (default: SensusAI)
+# Get repository name (default: EnodAI)
 echo ""
-echo -e "${BLUE}Enter repository name (default: SensusAI):${NC}"
+echo -e "${BLUE}Enter repository name (default: EnodAI):${NC}"
 read -p "> " REPO_NAME
-REPO_NAME=${REPO_NAME:-SensusAI}
+REPO_NAME=${REPO_NAME:-EnodAI}
 
 # Repository URL
 REPO_URL="https://github.com/${GITHUB_USERNAME}/${REPO_NAME}.git"
@@ -97,7 +97,7 @@ if ! git diff-index --quiet HEAD -- 2>/dev/null; then
         read -p "> " COMMIT_MSG
 
         if [ -z "$COMMIT_MSG" ]; then
-            COMMIT_MSG="Initial commit: SensusAI - AI-powered monitoring platform
+            COMMIT_MSG="Initial commit: EnodAI - AI-powered monitoring platform
 
 Features:
 - Anomaly detection with Isolation Forest
@@ -120,7 +120,7 @@ else
     if ! git rev-parse HEAD &>/dev/null; then
         echo -e "${BLUE}Creating initial commit...${NC}"
         git add .
-        git commit -m "Initial commit: SensusAI - AI-powered monitoring platform"
+        git commit -m "Initial commit: EnodAI - AI-powered monitoring platform"
         echo -e "${GREEN}✅ Initial commit created${NC}"
     fi
 fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SensusAI Database Backup Script
+# EnodAI Database Backup Script
 
 set -e
 
@@ -14,12 +14,12 @@ NC='\033[0m'
 # Configuration
 BACKUP_DIR="./backups"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-CONTAINER_NAME="sensusai-postgresql-1"
+CONTAINER_NAME="enodai-postgresql-1"
 DB_USER="kam_user"
 DB_NAME="kam_alerts"
 
 echo -e "${BLUE}================================${NC}"
-echo -e "${BLUE}  SensusAI Database Backup${NC}"
+echo -e "${BLUE}  EnodAI Database Backup${NC}"
 echo -e "${BLUE}================================${NC}"
 echo ""
 

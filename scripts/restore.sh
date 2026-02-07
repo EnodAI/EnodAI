@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SensusAI Database Restore Script
+# EnodAI Database Restore Script
 
 set -e
 
@@ -13,12 +13,12 @@ NC='\033[0m'
 
 # Configuration
 BACKUP_DIR="./backups"
-CONTAINER_NAME="sensusai-postgresql-1"
+CONTAINER_NAME="enodai-postgresql-1"
 DB_USER="kam_user"
 DB_NAME="kam_alerts"
 
 echo -e "${BLUE}================================${NC}"
-echo -e "${BLUE}  SensusAI Database Restore${NC}"
+echo -e "${BLUE}  EnodAI Database Restore${NC}"
 echo -e "${BLUE}================================${NC}"
 echo ""
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 SensusAI Test Data Generator"
+echo "🚀 EnodAI Test Data Generator"
 echo "=================================="
 echo ""
 
@@ -159,7 +159,7 @@ echo ""
 echo "  3. Check Prometheus metrics: http://localhost:9090"
 echo ""
 echo "  4. Query database:"
-echo "     docker exec -it sensusai-postgresql-1 psql -U sensus_user -d sensus_alerts"
+echo "     docker exec -it enodai-postgresql-1 psql -U enod_user -d enod_alerts"
 echo ""
 echo "  5. Monitor logs:"
 echo "     docker-compose logs -f ai-service"

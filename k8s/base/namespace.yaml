@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: sensusai
+  name: enodai
   labels:
-    name: sensusai
-    app: sensusai
+    name: enodai
+    app: enodai

@@ -1,4 +1,4 @@
-# SensusAI
+# EnodAI
 
 <div align="center">
 
@@ -9,46 +9,46 @@
 
 **AI-Powered Intelligent Monitoring Platform**
 
-*Latince "sensus" (algı, sezgi) - Sensing Anomalies, Delivering Insights*
+*From Latin "enodare" (to untie, to solve) - Untying the Knots of Complex Systems*
 
-[Özellikler](#-özellikler) • [Kurulum](#-kurulum) • [Kullanım](#-kullanım) • [Mimari](#-mimari) • [Katkıda Bulunma](#-katkıda-bulunma)
+[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Architecture](#-architecture) • [Contributing](#-contributing)
 
 </div>
 
 ---
 
-## 📝 Açıklama
+## 📝 Description
 
-**SensusAI**, sistem uyarılarını (alerts) ve metriklerini toplamak, saklamak ve yapay zeka ile analiz etmek için geliştirilmiş yüksek performanslı bir **mikroservis mimarisidir**. Prometheus AlertManager ile entegre çalışır, metrik anomalilerini tespit eder ve LLM (Large Language Model) kullanarak kök neden analizi yapar.
+**EnodAI** is a high-performance **microservices architecture** designed to collect, store, and analyze system alerts and metrics using artificial intelligence. It integrates with Prometheus AlertManager, detects metric anomalies, and performs root cause analysis using LLM (Large Language Models).
 
-Adı Latince "sensus" (algı, his, sezgi) kelimesinden gelir - sistemlerinizin altıncı hissi gibi çalışır.
+The name comes from the Latin word "enodare" (to untie, to unravel, to solve) - untying the complex knots in your system's problems.
 
-### 🎯 Temel Hedefler
+### 🎯 Core Objectives
 
-- **Real-time Monitoring**: Anlık sistem metriklerini ve uyarılarını toplama
-- **Anomali Tespiti**: Machine Learning ile otomatik anomali tespiti (Isolation Forest)
-- **Akıllı Analiz**: LLM destekli kök neden analizi ve çözüm önerileri
-- **Yüksek Performans**: Async processing, connection pooling, stream processing
-- **Ölçeklenebilirlik**: Mikroservis mimarisi ile horizontal ve vertical scaling
+- **Real-time Monitoring**: Collect real-time system metrics and alerts
+- **Anomaly Detection**: Automatic anomaly detection with Machine Learning (Isolation Forest)
+- **Intelligent Analysis**: LLM-powered root cause analysis and solution recommendations
+- **High Performance**: Async processing, connection pooling, stream processing
+- **Scalability**: Horizontal and vertical scaling with microservices architecture
 
 ---
 
-## ✨ Özellikler
+## ✨ Features
 
 ### 🔍 Monitoring & Data Collection
-- ✅ Prometheus AlertManager webhook entegrasyonu
-- ✅ REST API ile özel metrik toplama
-- ✅ PostgreSQL'de persistent storage
-- ✅ Redis Streams ile real-time data processing
+- ✅ Prometheus AlertManager webhook integration
+- ✅ REST API for custom metric collection
+- ✅ Persistent storage in PostgreSQL
+- ✅ Real-time data processing with Redis Streams
 - ✅ Pre-configured Grafana dashboards
 - ✅ Prometheus alert rules (30+ alerts)
 
 ### 🤖 AI/ML Capabilities
-- ✅ **Isolation Forest** algoritması ile anomali tespiti
-- ✅ **Ollama/Llama2** LLM ile kök neden analizi
-- ✅ Otomatik model training ve versiyonlama
+- ✅ **Isolation Forest** algorithm for anomaly detection
+- ✅ **Ollama/Llama2** LLM for root cause analysis
+- ✅ Automatic model training and versioning
 - ✅ Scheduled model retraining (APScheduler)
-- ✅ Confidence score hesaplama
+- ✅ Confidence score calculation
 - ✅ Model performance evaluation
 
 ### 📊 Visualization & Monitoring
@@ -89,7 +89,7 @@ Adı Latince "sensus" (algı, his, sezgi) kelimesinden gelir - sistemlerinizin a
 
 ---
 
-## 🏗️ Mimari
+## 🏗️ Architecture
 
 ```
 External Sources → Collector (Go) → PostgreSQL + Redis Streams
@@ -103,15 +103,15 @@ External Sources → Collector (Go) → PostgreSQL + Redis Streams
                                   Grafana Dashboards
 ```
 
-**Detaylı mimari dokümantasyon için**: [ARCHITECTURE.md](./ARCHITECTURE.md)
+**For detailed architecture documentation**: [ARCHITECTURE.md](./ARCHITECTURE.md)
 
-### Servisler
+### Services
 
-| Servis | Port | Teknoloji | Açıklama |
+| Service | Port | Technology | Description |
 |--------|------|-----------|----------|
-| **Collector** | 8080 | Go/Gin | Metrik ve alert toplama servisi |
-| **AI Service** | 8082 | Python/FastAPI | ML/LLM analiz servisi |
-| **PostgreSQL** | 5432 | PostgreSQL 15 | Ana veritabanı |
+| **Collector** | 8080 | Go/Gin | Metric and alert collection service |
+| **AI Service** | 8082 | Python/FastAPI | ML/LLM analysis service |
+| **PostgreSQL** | 5432 | PostgreSQL 15 | Primary database |
 | **Redis** | 6379 | Redis 7 | Message streaming & cache |
 | **Ollama** | 11434 | Ollama/Llama2 | LLM inference engine |
 | **Prometheus** | 9090 | Prometheus | Metrics collection |
@@ -119,60 +119,60 @@ External Sources → Collector (Go) → PostgreSQL + Redis Streams
 
 ---
 
-## 📋 Gereksinimler
+## 📋 Requirements
 
-### Sistem Gereksinimleri
+### System Requirements
 
-| Bileşen | Minimum | Önerilen |
+| Component | Minimum | Recommended |
 |---------|---------|----------|
 | **CPU** | 4 cores | 8 cores |
 | **RAM** | 8 GB | 16 GB |
 | **Disk** | 20 GB | 50 GB SSD |
 | **OS** | Linux/macOS/Windows with WSL2 | Ubuntu 22.04 LTS |
 
-### Yazılım Gereksinimleri
+### Software Requirements
 
-- **Docker**: 20.10.x veya üzeri
-- **Docker Compose**: 2.x veya üzeri
-- **Git**: 2.x veya üzeri
+- **Docker**: 20.10.x or later
+- **Docker Compose**: 2.x or later
+- **Git**: 2.x or later
 
-> **Not**: Ollama servisi için GPU desteği opsiyoneldir ancak önerilir (daha hızlı LLM inference).
+> **Note**: GPU support for Ollama service is optional but recommended (faster LLM inference).
 
 ---
 
-## 🚀 Kurulum
+## 🚀 Installation
 
-### Hızlı Başlangıç (Önerilen)
+### Quick Start (Recommended)
 
 ```bash
-# Otomatik kurulum scripti
-git clone https://github.com/your-username/SensusAI.git
-cd SensusAI
+# Automated setup script
+git clone https://github.com/your-username/EnodAI.git
+cd EnodAI
 ./scripts/setup.sh
 ```
 
-veya
+or
 
 ```bash
-# Makefile ile
+# Using Makefile
 make quickstart
 ```
 
-### Manuel Kurulum
+### Manual Installation
 
-### 1. Depoyu Klonlayın
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/SensusAI.git
-cd SensusAI
+git clone https://github.com/your-username/EnodAI.git
+cd EnodAI
 ```
 
-### 2. Environment Değişkenlerini Kontrol Edin
+### 2. Check Environment Variables
 
-Docker Compose, default değişkenleri kullanır. Özelleştirme için `.env` dosyası oluşturabilirsiniz:
+Docker Compose uses default variables. You can create a `.env` file for customization:
 
 ```bash
-# .env (opsiyonel)
+# .env (optional)
 POSTGRES_USER=kam_user
 POSTGRES_PASSWORD=kam_password
 POSTGRES_DB=kam_alerts
@@ -181,64 +181,64 @@ OLLAMA_URL=http://ollama:11434
 GRAFANA_ADMIN_PASSWORD=kam_password
 ```
 
-### 3. Docker Container'ları Başlatın
+### 3. Start Docker Containers
 
 ```bash
-# Tüm servisleri build et ve başlat
+# Build and start all services
 docker-compose up --build -d
 
-# Logları izle
+# Follow logs
 docker-compose logs -f
 
-# Belirli bir servisin logunu izle
+# Follow specific service logs
 docker-compose logs -f ai-service
 ```
 
-### 4. Ollama Model'ini İndirin
+### 4. Download Ollama Model
 
-Ollama container'ı başladıktan sonra Llama2 modelini indirin:
+After the Ollama container starts, download the Llama2 model:
 
 ```bash
-docker exec -it sensusai-ollama-1 ollama pull llama2
+docker exec -it enodai-ollama-1 ollama pull llama2
 ```
 
-> **İlk kullanımda**: Model indirme işlemi ~4GB veri indireceği için birkaç dakika sürebilir.
+> **First use**: Model download will take a few minutes as it downloads ~4GB of data.
 
-### 5. Servislerin Durumunu Kontrol Edin
+### 5. Check Service Status
 
 ```bash
-# Tüm container'ların durumunu kontrol et
+# Check all container status
 docker-compose ps
 
-# Health check'leri test et
+# Test health checks
 curl http://localhost:8080/health  # Collector
 curl http://localhost:8082/health  # AI Service
 curl http://localhost:9090/-/healthy  # Prometheus
 curl http://localhost:3000/api/health  # Grafana
 ```
 
-**Beklenen Çıktı:**
+**Expected Output:**
 ```
 NAME                        STATUS    PORTS
-sensusai-collector-1      running   0.0.0.0:8080->8080/tcp
-sensusai-ai-service-1     running   0.0.0.0:8082->8082/tcp
-sensusai-postgresql-1     running   0.0.0.0:5432->5432/tcp
-sensusai-redis-1          running   0.0.0.0:6379->6379/tcp
-sensusai-ollama-1         running   0.0.0.0:11434->11434/tcp
-sensusai-prometheus-1     running   0.0.0.0:9090->9090/tcp
-sensusai-grafana-1        running   0.0.0.0:3000->3000/tcp
+enodai-collector-1      running   0.0.0.0:8080->8080/tcp
+enodai-ai-service-1     running   0.0.0.0:8082->8082/tcp
+enodai-postgresql-1     running   0.0.0.0:5432->5432/tcp
+enodai-redis-1          running   0.0.0.0:6379->6379/tcp
+enodai-ollama-1         running   0.0.0.0:11434->11434/tcp
+enodai-prometheus-1     running   0.0.0.0:9090->9090/tcp
+enodai-grafana-1        running   0.0.0.0:3000->3000/tcp
 ```
 
 ---
 
-## 🔐 Authentication (Yeni!)
+## 🔐 Authentication (New!)
 
-SensusAI JWT token-based authentication kullanır.
+EnodAI uses JWT token-based authentication.
 
-### Token Alma
+### Getting a Token
 
 ```bash
-# Basic auth ile login
+# Login with basic auth
 curl -X POST http://localhost:8082/api/v1/auth/token \
   -u admin:secret
 
@@ -249,27 +249,27 @@ curl -X POST http://localhost:8082/api/v1/auth/token \
 }
 ```
 
-### Token ile API Kullanımı
+### Using Token with API
 
 ```bash
-# Token ile korumalı endpoint'e erişim
+# Access protected endpoint with token
 curl http://localhost:8082/api/v1/analysis/latest \
   -H "Authorization: Bearer <your-token>"
 ```
 
-**Default Kullanıcılar:**
-- Username: `admin` / Password: `secret` (tüm yetkiler)
-- Username: `user` / Password: `secret` (sadece okuma)
+**Default Users:**
+- Username: `admin` / Password: `secret` (all permissions)
+- Username: `user` / Password: `secret` (read-only)
 
-> ⚠️ Production'da bu şifreleri değiştirin!
+> ⚠️ Change these passwords in production!
 
 ---
 
-## 📖 Kullanım
+## 📖 Usage
 
-### 1. Metrik Gönderme
+### 1. Sending Metrics
 
-REST API ile manuel metrik gönderimi:
+Manual metric submission via REST API:
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/metrics \
@@ -291,7 +291,7 @@ curl -X POST http://localhost:8080/api/v1/metrics \
 }
 ```
 
-### 2. Alert Gönderme (Prometheus AlertManager Format)
+### 2. Sending Alerts (Prometheus AlertManager Format)
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/alerts \
@@ -319,9 +319,9 @@ curl -X POST http://localhost:8080/api/v1/alerts \
 }
 ```
 
-### 3. AI Analiz Sonuçlarını Görüntüleme
+### 3. Viewing AI Analysis Results
 
-Son analiz sonuçlarını REST API ile sorgulayın:
+Query latest analysis results via REST API:
 
 ```bash
 curl http://localhost:8082/api/v1/analysis/latest
@@ -346,32 +346,32 @@ curl http://localhost:8082/api/v1/analysis/latest
 ]
 ```
 
-### 4. Grafana Dashboard'larına Erişim
+### 4. Accessing Grafana Dashboards
 
-1. **Grafana'ya giriş yapın:**
+1. **Login to Grafana:**
    - URL: http://localhost:3000
    - Username: `admin`
    - Password: `kam_password`
 
-2. **Datasources'ı kontrol edin:**
+2. **Check datasources:**
    - Configuration → Data Sources
-   - Prometheus ve PostgreSQL datasource'ları otomatik yapılandırılmıştır
+   - Prometheus and PostgreSQL datasources are auto-configured
 
-3. **Dashboard oluşturun:**
-   - **Prometheus datasource** ile:
-     - `sensus_alerts_received_total` - Gelen alert sayısı
-     - `sensus_metrics_received_total` - Gelen metrik sayısı
-     - `sensus_processing_duration_seconds` - İşlem süreleri
+3. **Create dashboards:**
+   - **Prometheus datasource**:
+     - `enod_alerts_received_total` - Number of alerts received
+     - `enod_metrics_received_total` - Number of metrics received
+     - `enod_processing_duration_seconds` - Processing durations
 
-   - **PostgreSQL datasource** ile:
+   - **PostgreSQL datasource**:
      ```sql
-     -- Son 24 saatteki alertler
+     -- Alerts in last 24 hours
      SELECT created_at, alert_name, severity, status
      FROM alerts
      WHERE created_at > NOW() - INTERVAL '24 hours'
      ORDER BY created_at DESC;
 
-     -- AI analiz sonuçları
+     -- AI analysis results
      SELECT a.alert_name, a.severity,
             r.analysis_type, r.confidence_score, r.created_at
      FROM ai_analysis_results r
@@ -380,34 +380,34 @@ curl http://localhost:8082/api/v1/analysis/latest
      LIMIT 50;
      ```
 
-### 5. Prometheus Targets'ı Kontrol Etme
+### 5. Checking Prometheus Targets
 
 - URL: http://localhost:9090/targets
-- Tüm target'ların **UP** durumunda olduğunu kontrol edin
+- Verify all targets are in **UP** state
 
-### 6. Database'e Direkt Erişim
+### 6. Direct Database Access
 
-PostgreSQL'e bağlanmak için:
+To connect to PostgreSQL:
 
 ```bash
-docker exec -it sensusai-postgresql-1 psql -U kam_user -d kam_alerts
+docker exec -it enodai-postgresql-1 psql -U kam_user -d kam_alerts
 ```
 
-**Örnek Sorgular:**
+**Example Queries:**
 
 ```sql
--- Son 10 metrik
+-- Last 10 metrics
 SELECT * FROM metrics ORDER BY timestamp DESC LIMIT 10;
 
--- Son 10 alert
+-- Last 10 alerts
 SELECT * FROM alerts ORDER BY created_at DESC LIMIT 10;
 
--- Anomali tespit sonuçları
+-- Anomaly detection results
 SELECT * FROM ai_analysis_results
 WHERE analysis_type = 'anomaly_detection'
 ORDER BY created_at DESC LIMIT 10;
 
--- LLM analiz sonuçları
+-- LLM analysis results
 SELECT
     a.alert_name,
     a.severity,
@@ -422,45 +422,45 @@ ORDER BY r.created_at DESC;
 
 ---
 
-## 🔧 Konfigürasyon
+## 🔧 Configuration
 
 ### Collector Service Configuration
 
-`collector/main.go` dosyasında aşağıdaki environment değişkenleri kullanılır:
+Environment variables used in `collector/main.go`:
 
-| Değişken | Varsayılan | Açıklama |
+| Variable | Default | Description |
 |----------|-----------|----------|
 | `DB_HOST` | postgresql | PostgreSQL host |
-| `DB_USER` | kam_user | PostgreSQL kullanıcı adı |
-| `DB_PASSWORD` | kam_password | PostgreSQL şifresi |
-| `DB_NAME` | kam_alerts | Veritabanı adı |
-| `REDIS_ADDR` | redis:6379 | Redis adresi |
+| `DB_USER` | kam_user | PostgreSQL username |
+| `DB_PASSWORD` | kam_password | PostgreSQL password |
+| `DB_NAME` | kam_alerts | Database name |
+| `REDIS_ADDR` | redis:6379 | Redis address |
 
 ### AI Service Configuration
 
-`ai-service/app/config.py` dosyasında aşağıdaki ayarlar yapılır:
+Settings in `ai-service/app/config.py`:
 
-| Değişken | Varsayılan | Açıklama |
+| Variable | Default | Description |
 |----------|-----------|----------|
 | `REDIS_URL` | redis://redis:6379 | Redis connection URL |
 | `POSTGRES_HOST` | postgres | PostgreSQL host |
-| `POSTGRES_USER` | kam_user | PostgreSQL kullanıcı adı |
-| `POSTGRES_PASSWORD` | kam_password | PostgreSQL şifresi |
-| `POSTGRES_DB` | kam_alerts | Veritabanı adı |
+| `POSTGRES_USER` | kam_user | PostgreSQL username |
+| `POSTGRES_PASSWORD` | kam_password | PostgreSQL password |
+| `POSTGRES_DB` | kam_alerts | Database name |
 | `OLLAMA_HOST` | ollama | Ollama host |
 | `OLLAMA_PORT` | 11434 | Ollama port |
 
 ### Prometheus AlertManager Webhook Configuration
 
-Prometheus AlertManager'ı SensusAI'ye yönlendirmek için:
+To redirect Prometheus AlertManager to EnodAI:
 
 ```yaml
 # alertmanager.yml
 route:
-  receiver: 'sensusai-webhook'
+  receiver: 'enodai-webhook'
 
 receivers:
-  - name: 'sensusai-webhook'
+  - name: 'enodai-webhook'
     webhook_configs:
       - url: 'http://collector:8080/api/v1/alerts'
         send_resolved: true
@@ -468,47 +468,47 @@ receivers:
 
 ---
 
-## 🧪 Test
+## 🧪 Testing
 
-### Otomatik Test Suite
+### Automated Test Suite
 
 ```bash
-# Tüm testleri çalıştır
+# Run all tests
 make test
 
-# Sadece AI service testleri
+# AI service tests only
 make test-ai
 
-# Sadece Collector testleri
+# Collector tests only
 make test-collector
 
-# Coverage report ile
+# With coverage report
 cd ai-service && pytest --cov=app --cov-report=html
 ```
 
-**Test İstatistikleri:**
-- AI Service: 20+ test, 80%+ coverage
-- Collector: 12+ test, 75%+ coverage
-- Total: 32+ test, 78%+ coverage
+**Test Statistics:**
+- AI Service: 20+ tests, 80%+ coverage
+- Collector: 12+ tests, 75%+ coverage
+- Total: 32+ tests, 78%+ coverage
 
 ### Linting
 
 ```bash
-# Tüm linting
+# Run all linting
 make lint
 
-# Otomatik düzeltme
+# Auto-fix
 make lint-fix
 ```
 
-### Manuel Test Script'i
+### Manual Test Script
 
-Otomatik test için sample metrik ve alert gönderin:
+Send sample metrics and alerts for automated testing:
 
 ```bash
 #!/bin/bash
 
-# Test metrikleri gönder
+# Send test metrics
 for i in {1..10}; do
   cpu_value=$((RANDOM % 100))
   curl -X POST http://localhost:8080/api/v1/metrics \
@@ -522,7 +522,7 @@ for i in {1..10}; do
   sleep 1
 done
 
-# Test alert'i gönder
+# Send test alert
 curl -X POST http://localhost:8080/api/v1/alerts \
   -H "Content-Type: application/json" \
   -d '[{
@@ -536,30 +536,30 @@ curl -X POST http://localhost:8080/api/v1/alerts \
     "startsAt": "2024-02-07T10:00:00Z"
   }]'
 
-echo -e "\n✅ Test verileri gönderildi!"
-echo "AI analiz sonuçlarını görmek için:"
+echo -e "\n✅ Test data sent!"
+echo "View AI analysis results:"
 echo "curl http://localhost:8082/api/v1/analysis/latest"
 ```
 
-Dosyayı çalıştırın:
+Run the file:
 
 ```bash
 chmod +x test_data.sh
 ./test_data.sh
 ```
 
-### Log İzleme
+### Log Monitoring
 
-Servislerin işlem durumunu izleyin:
+Monitor service processing status:
 
 ```bash
-# AI Service log'larını izle (anomali tespiti ve LLM analiz)
+# Watch AI Service logs (anomaly detection and LLM analysis)
 docker-compose logs -f ai-service
 
-# Collector log'larını izle (gelen metrik/alert)
+# Watch Collector logs (incoming metrics/alerts)
 docker-compose logs -f collector
 
-# Redis consumer log'larını izle
+# Watch Redis consumer logs
 docker-compose logs -f ai-service | grep "Consumer"
 ```
 
@@ -567,129 +567,129 @@ docker-compose logs -f ai-service | grep "Consumer"
 
 ## 🐛 Troubleshooting
 
-### Problem: Servisler başlamıyor
+### Problem: Services not starting
 
-**Çözüm:**
+**Solution:**
 ```bash
-# Container'ları durdur ve temizle
+# Stop and clean containers
 docker-compose down -v
 
-# Yeniden build et
+# Rebuild
 docker-compose up --build -d
 
-# Log'ları kontrol et
+# Check logs
 docker-compose logs
 ```
 
-### Problem: PostgreSQL bağlantı hatası
+### Problem: PostgreSQL connection error
 
-**Belirti:** `connection refused` veya `database does not exist`
+**Symptom:** `connection refused` or `database does not exist`
 
-**Çözüm:**
+**Solution:**
 ```bash
-# PostgreSQL container'ının çalıştığından emin ol
+# Ensure PostgreSQL container is running
 docker-compose ps postgresql
 
-# Health check durumu
-docker exec sensusai-postgresql-1 pg_isready -U kam_user
+# Check health
+docker exec enodai-postgresql-1 pg_isready -U kam_user
 
-# Manuel bağlantı testi
-docker exec -it sensusai-postgresql-1 psql -U kam_user -d kam_alerts -c "SELECT 1;"
+# Test manual connection
+docker exec -it enodai-postgresql-1 psql -U kam_user -d kam_alerts -c "SELECT 1;"
 ```
 
-### Problem: Ollama model yüklenmedi
+### Problem: Ollama model not loaded
 
-**Belirti:** LLM analiz hataları
+**Symptom:** LLM analysis errors
 
-**Çözüm:**
+**Solution:**
 ```bash
-# Ollama container'ına bağlan
-docker exec -it sensusai-ollama-1 bash
+# Connect to Ollama container
+docker exec -it enodai-ollama-1 bash
 
-# Mevcut modelleri listele
+# List available models
 ollama list
 
-# Model yoksa indir
+# Download model if missing
 ollama pull llama2
 
-# Model indirme durumunu kontrol et
+# Check model download status
 curl http://localhost:11434/api/tags
 ```
 
 ### Problem: Redis connection timeout
 
-**Çözüm:**
+**Solution:**
 ```bash
-# Redis'in çalıştığından emin ol
-docker exec sensusai-redis-1 redis-cli ping
-# Beklenen: PONG
+# Ensure Redis is running
+docker exec enodai-redis-1 redis-cli ping
+# Expected: PONG
 
-# Redis stream kontrolü
-docker exec sensusai-redis-1 redis-cli XINFO STREAM metrics:raw
+# Check Redis stream
+docker exec enodai-redis-1 redis-cli XINFO STREAM metrics:raw
 ```
 
-### Problem: AI Service mesaj consume etmiyor
+### Problem: AI Service not consuming messages
 
-**Belirti:** Metrikler gelmiyor ancak database'e yazılmıyor
+**Symptom:** Metrics arriving but not being written to database
 
-**Çözüm:**
+**Solution:**
 ```bash
-# AI Service log'larını kontrol et
+# Check AI Service logs
 docker-compose logs ai-service | grep "Consumer"
 
-# Redis stream'i manuel kontrol et
-docker exec sensusai-redis-1 redis-cli XLEN metrics:raw
-# Mesaj sayısı görünmeli
+# Manually check Redis stream
+docker exec enodai-redis-1 redis-cli XLEN metrics:raw
+# Should show message count
 
-# Consumer group durumu
-docker exec sensusai-redis-1 redis-cli XINFO GROUPS metrics:raw
+# Check consumer group status
+docker exec enodai-redis-1 redis-cli XINFO GROUPS metrics:raw
 
-# AI Service'i yeniden başlat
+# Restart AI Service
 docker-compose restart ai-service
 ```
 
-### Problem: Düşük performans
+### Problem: Low performance
 
-**Çözüm:**
+**Solution:**
 ```bash
-# Resource kullanımını kontrol et
+# Check resource usage
 docker stats
 
-# Ollama için daha fazla memory ayır (docker-compose.yml)
+# Allocate more memory for Ollama (docker-compose.yml)
 # deploy.resources.limits.memory: 8G
 
-# PostgreSQL connection pool artır (ai-service/app/database.py)
+# Increase PostgreSQL connection pool (ai-service/app/database.py)
 # max_size: 30
 
-# Redis pool size artır (collector/main.go)
+# Increase Redis pool size (collector/main.go)
 # PoolSize: 30
 ```
 
 ---
 
-## 🛑 Servisleri Durdurma
+## 🛑 Stopping Services
 
-### Geçici Durdurma
+### Temporary Stop
 
 ```bash
-# Tüm servisleri durdur (data korunur)
+# Stop all services (data is preserved)
 docker-compose stop
 
-# Tekrar başlat
+# Restart
 docker-compose start
 ```
 
-### Tamamen Kaldırma
+### Complete Removal
 
 ```bash
-# Container'ları ve network'ü sil (volume'ler korunur)
+# Remove containers and network (volumes are preserved)
 docker-compose down
 
-# Volume'leri de sil (TÜM VERİLER SİLİNİR!)
+# Remove volumes too (ALL DATA WILL BE DELETED!)
 docker-compose down -v
 ```
 
-### Belirli Bir Servisi Yeniden Başlatma
+### Restarting Specific Service
 
 ```bash
 docker-compose restart ai-service
@@ -698,71 +698,71 @@ docker-compose restart collector
 
 ---
 
-## 📊 Metriks ve Monitoring
+## 📊 Metrics and Monitoring
 
-### Toplanan Prometheus Metrics
+### Collected Prometheus Metrics
 
 #### Collector Metrics (8080/metrics)
-- `sensus_alerts_received_total` - Toplam gelen alert sayısı
-- `sensus_metrics_received_total` - Toplam gelen metrik sayısı
-- `sensus_processing_duration_seconds` - Request işlem süresi (histogram)
+- `enod_alerts_received_total` - Total alerts received
+- `enod_metrics_received_total` - Total metrics received
+- `enod_processing_duration_seconds` - Request processing time (histogram)
 
-#### Kullanım:
+#### Usage:
 ```promql
-# Alert alma hızı (son 5 dakika)
-rate(sensus_alerts_received_total[5m])
+# Alert reception rate (last 5 minutes)
+rate(enod_alerts_received_total[5m])
 
-# 95. percentile işlem süresi
-histogram_quantile(0.95, sensus_processing_duration_seconds_bucket)
+# 95th percentile processing time
+histogram_quantile(0.95, enod_processing_duration_seconds_bucket)
 
-# Metrik toplama hızı
-rate(sensus_metrics_received_total[5m])
+# Metric collection rate
+rate(enod_metrics_received_total[5m])
 ```
 
 ---
 
-## 🔒 Güvenlik Notları
+## 🔒 Security Notes
 
-> ⚠️ **ÖNEMLİ**: Bu kurulum **development/test** ortamları içindir. Production kullanımı için:
+> ⚠️ **IMPORTANT**: This setup is for **development/test** environments. For production use:
 
-- [ ] Tüm default şifreleri değiştirin
-- [ ] Environment değişkenlerini secrets manager'a taşıyın (Vault, AWS Secrets Manager)
-- [ ] TLS/SSL etkinleştirin (PostgreSQL, Redis, HTTP)
-- [ ] Network segmentasyonu yapın
-- [ ] Rate limiting ekleyin
-- [ ] API authentication/authorization implementi yapın (JWT, OAuth2)
-- [ ] Firewall kuralları yapılandırın
-- [ ] Container'ları non-root user ile çalıştırın
-- [ ] Image vulnerability scanning yapın (Trivy, Clair)
-- [ ] Audit logging ekleyin
+- [ ] Change all default passwords
+- [ ] Move environment variables to secrets manager (Vault, AWS Secrets Manager)
+- [ ] Enable TLS/SSL (PostgreSQL, Redis, HTTP)
+- [ ] Configure network segmentation
+- [ ] Add rate limiting
+- [ ] Implement API authentication/authorization (JWT, OAuth2)
+- [ ] Configure firewall rules
+- [ ] Run containers as non-root user
+- [ ] Perform image vulnerability scanning (Trivy, Clair)
+- [ ] Add audit logging
 
 ---
 
-## 🛠️ Makefile Komutları
+## 🛠️ Makefile Commands
 
 ```bash
-make help              # Tüm komutları listele
-make build             # Docker image'ları build et
-make up                # Servisleri başlat
-make down              # Servisleri durdur
-make logs              # Logları göster
-make test              # Testleri çalıştır
-make lint              # Kodu kontrol et
-make health-check      # Servis sağlığını kontrol et
-make send-test-data    # Test verisi gönder
-make db-backup         # Database yedekle
-make db-restore        # Database geri yükle
-make clean             # Cleanup yap
-make quickstart        # Her şeyi başlat
+make help              # List all commands
+make build             # Build Docker images
+make up                # Start services
+make down              # Stop services
+make logs              # Show logs
+make test              # Run tests
+make lint              # Check code
+make health-check      # Check service health
+make send-test-data    # Send test data
+make db-backup         # Backup database
+make db-restore        # Restore database
+make clean             # Cleanup
+make quickstart        # Start everything
 ```
 
 ### Utility Scripts
 
 ```bash
-./scripts/setup.sh     # Otomatik kurulum
+./scripts/setup.sh     # Automated setup
 ./scripts/backup.sh    # Database backup
 ./scripts/restore.sh   # Database restore
-./scripts/monitor.sh   # Canlı monitoring
+./scripts/monitor.sh   # Live monitoring
 ```
 
 ---
@@ -770,61 +770,61 @@ make quickstart        # Her şeyi başlat
 ## ☸️ Kubernetes Deployment
 
 ```bash
-# Namespace oluştur
+# Create namespace
 kubectl apply -f k8s/base/namespace.yaml
 
-# Tüm kaynakları deploy et
+# Deploy all resources
 kubectl apply -f k8s/base/
 
-# Veya Kustomize ile
+# Or using Kustomize
 kubectl apply -k k8s/overlays/prod/
 
-# Durumu kontrol et
-kubectl get pods -n sensusai
-kubectl get svc -n sensusai
+# Check status
+kubectl get pods -n enodai
+kubectl get svc -n enodai
 
 # Logs
-kubectl logs -f deployment/ai-service -n sensusai
+kubectl logs -f deployment/ai-service -n enodai
 
 # Scaling
-kubectl scale deployment collector -n sensusai --replicas=5
+kubectl scale deployment collector -n enodai --replicas=5
 ```
 
-**Auto-scaling (HPA) otomatik olarak yapılandırılmıştır:**
+**Auto-scaling (HPA) is pre-configured:**
 - Collector: 2-10 replicas (CPU 70%, Memory 80%)
 - AI Service: 2-5 replicas (CPU 70%, Memory 80%)
 
-Detaylı bilgi: [k8s/README.md](./k8s/README.md)
+For details: [k8s/README.md](./k8s/README.md)
 
 ---
 
 ## 🚢 Production Deployment
 
 ```bash
-# Production compose ile
+# Using production compose
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 
-# Veya Makefile ile
+# Or using Makefile
 make deploy-prod
 ```
 
-**Production özellikleri:**
-- Resource limits ve reservations
+**Production features:**
+- Resource limits and reservations
 - Replicated services (2x collector, 2x ai-service)
 - Enhanced logging
 - Auto-restart policies
 - Performance tuning
 
-Detaylı bilgi: [DEPLOYMENT.md](./DEPLOYMENT.md)
+For details: [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ---
 
 ## 🔄 CI/CD Pipeline
 
-GitHub Actions ile otomatik CI/CD:
+Automated CI/CD with GitHub Actions:
 
 **`.github/workflows/ci.yml`:**
-- ✅ Python ve Go testleri
+- ✅ Python and Go tests
 - ✅ Linting (black, flake8, golangci-lint)
 - ✅ Code coverage (Codecov)
 - ✅ Docker image build
@@ -837,21 +837,21 @@ GitHub Actions ile otomatik CI/CD:
 
 ---
 
-## 📚 Ek Kaynaklar
+## 📚 Additional Resources
 
-### Dokümantasyon
-- **Mimari Dokümantasyon**: [ARCHITECTURE.md](./ARCHITECTURE.md)
+### Documentation
+- **Architecture Documentation**: [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **Deployment Guide**: [DEPLOYMENT.md](./DEPLOYMENT.md)
 - **Contributing Guide**: [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **Kubernetes Guide**: [k8s/README.md](./k8s/README.md)
 
 ### API & Monitoring
-- **API Dokümantasyonu**: http://localhost:8082/docs (FastAPI auto-generated)
+- **API Documentation**: http://localhost:8082/docs (FastAPI auto-generated)
 - **Prometheus UI**: http://localhost:9090
 - **Grafana**: http://localhost:3000
 - **Prometheus Alerts**: http://localhost:9090/alerts
 
-### Teknoloji Dokümantasyonları
+### Technology Documentation
 - [Go Gin Framework](https://gin-gonic.com/docs/)
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [PostgreSQL](https://www.postgresql.org/docs/)
@@ -861,39 +861,39 @@ GitHub Actions ile otomatik CI/CD:
 
 ---
 
-## 🤝 Katkıda Bulunma
+## 🤝 Contributing
 
-Katkılarınızı bekliyoruz! Lütfen aşağıdaki adımları takip edin:
+We welcome your contributions! Please follow these steps:
 
-1. Fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request açın
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push your branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Geliştirme Kuralları
+### Development Guidelines
 - Code style: Go (gofmt), Python (black, isort)
 - Commit message format: Conventional Commits
-- Test coverage: Minimum %80
-- Documentation: Her yeni feature için dokümantasyon ekleyin
+- Test coverage: Minimum 80%
+- Documentation: Add documentation for every new feature
 
 ---
 
-## 📄 Lisans
+## 📄 License
 
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
-
----
-
-## 👥 Yazarlar
-
-- **SensusAI Development Team**
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Teşekkürler
+## 👥 Authors
 
-- [Prometheus](https://prometheus.io/) - Monitoring sistemi
+- **EnodAI Development Team**
+
+---
+
+## 🙏 Acknowledgments
+
+- [Prometheus](https://prometheus.io/) - Monitoring system
 - [Grafana](https://grafana.com/) - Visualization
 - [Ollama](https://ollama.ai/) - LLM inference
 - [PostgreSQL](https://www.postgresql.org/) - Database
@@ -901,18 +901,18 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 
 ---
 
-## 📞 İletişim
+## 📞 Contact
 
-Sorularınız için:
-- GitHub Issues: [Create an issue](https://github.com/your-username/SensusAI/issues)
-- Email: support@sensusai.dev
+For questions:
+- GitHub Issues: [Create an issue](https://github.com/your-username/EnodAI/issues)
+- Email: support@enodai.dev
 
 ---
 
 <div align="center">
 
-**SensusAI** ile sisteminizi akıllıca izleyin! 🚀
+**Monitor your systems intelligently with EnodAI!** 🚀
 
-Made with ❤️ by SensusAI Team
+Made with ❤️ by EnodAI Team
 
 </div>

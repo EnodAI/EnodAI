@@ -184,22 +184,22 @@ CronTrigger(hour='*/6')
 
 ### Grafana Dashboards
 
-**Auto-provisioned dashboard**: `sensus-overview.json`
+**Auto-provisioned dashboard**: `enod-overview.json`
 
 **Panels**:
 1. Total Alerts Received (Stat)
-   - Query: `sensus_alerts_received_total`
+   - Query: `enod_alerts_received_total`
 
 2. Total Metrics Received (Stat)
-   - Query: `sensus_metrics_received_total`
+   - Query: `enod_metrics_received_total`
 
 3. Ingestion Rate (Time Series)
-   - Query: `rate(sensus_alerts_received_total[5m])`
-   - Query: `rate(sensus_metrics_received_total[5m])`
+   - Query: `rate(enod_alerts_received_total[5m])`
+   - Query: `rate(enod_metrics_received_total[5m])`
 
 4. Processing Duration (Time Series)
-   - Query: `histogram_quantile(0.95, rate(sensus_processing_duration_seconds_bucket[5m]))`
-   - Query: `histogram_quantile(0.99, rate(sensus_processing_duration_seconds_bucket[5m]))`
+   - Query: `histogram_quantile(0.95, rate(enod_processing_duration_seconds_bucket[5m]))`
+   - Query: `histogram_quantile(0.99, rate(enod_processing_duration_seconds_bucket[5m]))`
 
 **Provisioning**:
 - Location: `grafana/provisioning/dashboards/`
@@ -212,7 +212,7 @@ CronTrigger(hour='*/6')
 
 **Alert Groups**:
 
-1. **sensusai_alerts**
+1. **enodai_alerts**
    - Service health (Down alerts)
    - Performance (Latency)
    - Traffic (Volume, No data)
@@ -300,7 +300,7 @@ CronTrigger(hour='*/6')
 **Location**: `k8s/base/`
 
 **Manifests**:
-1. `namespace.yaml` - sensusai namespace
+1. `namespace.yaml` - enodai namespace
 2. `configmap.yaml` - Configuration
 3. `secret.yaml` - Sensitive data
 4. `collector-deployment.yaml` - Collector + Service + HPA

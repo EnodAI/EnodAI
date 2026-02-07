@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# SensusAI Setup Script
-# This script sets up the complete SensusAI environment
+# EnodAI Setup Script
+# This script sets up the complete EnodAI environment
 
 set -e
 
@@ -13,7 +13,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}================================${NC}"
-echo -e "${BLUE}  SensusAI Setup Script${NC}"
+echo -e "${BLUE}  EnodAI Setup Script${NC}"
 echo -e "${BLUE}================================${NC}"
 echo ""
 
@@ -118,7 +118,7 @@ done
 # Download Ollama models
 echo ""
 echo -e "${BLUE}Downloading Ollama models...${NC}"
-docker exec sensusai-ollama-1 ollama pull llama2
+docker exec enodai-ollama-1 ollama pull llama2
 echo -e "${GREEN}✅ Ollama models downloaded${NC}"
 
 # Create initial database tables

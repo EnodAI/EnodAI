@@ -1,4 +1,4 @@
--- SensusAI Database Schema
+-- EnodAI Database Schema
 -- Production-ready schema with UUID support and comprehensive tracking
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

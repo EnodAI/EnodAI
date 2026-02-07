@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: postgresql
-  namespace: sensusai
+  namespace: enodai
 spec:
   ports:
   - port: 5432
@@ -15,7 +15,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgresql
-  namespace: sensusai
+  namespace: enodai
 spec:
   serviceName: postgresql
   replicas: 1
@@ -35,24 +35,24 @@ spec:
           name: postgresql
         envFrom:
         - configMapRef:
-            name: sensusai-config
+            name: enodai-config
         - secretRef:
-            name: sensusai-secrets
+            name: enodai-secrets
         env:
         - name: POSTGRES_USER
           valueFrom:
             configMapKeyRef:
-              name: sensusai-config
+              name: enodai-config
               key: DB_USER
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: sensusai-secrets
+              name: enodai-secrets
               key: POSTGRES_PASSWORD
         - name: POSTGRES_DB
           valueFrom:
             configMapKeyRef:
-              name: sensusai-config
+              name: enodai-config
               key: DB_NAME
         volumeMounts:
         - name: postgresql-storage
