@@ -50,9 +50,9 @@ func Load() (*Config, error) {
 		Database: DatabaseConfig{
 			Host:     getEnv("DB_HOST", "localhost"),
 			Port:     getEnv("DB_PORT", "5432"),
-			Name:     getEnv("DB_NAME", "kam_alerts"),
-			User:     getEnv("DB_USER", "kam_user"),
-			Password: getEnv("DB_PASSWORD", "kam_password"),
+			Name:     getEnv("DB_NAME", "enod_alerts"),
+			User:     getEnv("DB_USER", "enod_user"),
+			Password: getEnv("DB_PASSWORD", "enod_password"),
 			SSLMode:  getEnv("DB_SSL_MODE", "disable"),
 		},
 		Redis: RedisConfig{

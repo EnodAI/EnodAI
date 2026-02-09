@@ -3,6 +3,7 @@ import asyncio
 import redis.asyncio as redis
 from loguru import logger
 from app.config import get_settings
+from app.database import get_db_pool
 
 class RedisClient:
     def __init__(self):
@@ -82,7 +83,6 @@ class RedisConsumer:
         """Start consuming messages from Redis Stream"""
         from app.detector import AnomalyDetector
         from app.services.hybrid_analyzer import LLMAnalyzer
-        from app.database import get_db_pool
 
         logger.info("Starting Redis consumer...")
         self.running = True
