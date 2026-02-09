@@ -18,8 +18,7 @@ class LLMAnalyzer:
         payload = {
             "model": self.model_name,
             "prompt": prompt,
-            "stream": False,
-            "format": "json"
+            "stream": False
         }
 
         try:

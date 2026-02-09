@@ -50,7 +50,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 6G
+          memory: 8G
     restart: unless-stopped
 
   collector:
