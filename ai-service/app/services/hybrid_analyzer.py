@@ -44,83 +44,57 @@ class LLMAnalyzer:
         labels = alert.get("labels", {})
         annotations = alert.get("annotations", {})
 
-        return f"""You are a Senior Site Reliability Engineer with 10+ years of experience in production systems.
+        return f"""You are a Senior SRE analyzing a production alert.
 
-🚨 CRITICAL RULES - VIOLATION WILL CAUSE INCORRECT ANALYSIS:
-1. READ ONLY THIS ALERT'S DESCRIPTION - Do NOT use information from other alerts or previous requests
-2. EXTRACT ONLY technical details that appear in THIS description - Do NOT invent or assume details
-3. USE ONLY the technology mentioned in THIS alert (MongoDB uses WiredTiger not JVM, Redis uses memory not JVM, etc.)
-4. If a specific metric/detail is NOT in the description, DO NOT mention it in root cause
-5. VERIFY every technical term you use appears in the description below
+CRITICAL RULES:
+1. Use ONLY information from THIS alert's description below
+2. Match technology terms EXACTLY (MongoDB=WiredTiger, Redis=memory/eviction, PostgreSQL=connections, Nginx=workers)
+3. Extract EXACT server names, IPs, and metrics from description
+4. If detail not in description, don't mention it
 
-EXTRACTION RULES:
-- Server names/IPs: Extract ALL mentioned (e.g., "mongo-primary-01.company.internal (10.3.2.10)")
-- Technical problem: Use EXACT terms from description (e.g., if it says "WiredTiger cache 8.2GB/8GB", say that, NOT "JVM heap")
-- Metrics: Use EXACT numbers from description (e.g., "63.8GB/64GB", "96% disk I/O")
-- DO NOT use generic terms - use specific technology terms from THIS alert
+ALERT: {labels.get('alertname', 'Unknown')} | {labels.get('severity', 'Unknown')}
+Instance: {labels.get('instance', 'Unknown')} | Service: {labels.get('service', 'Unknown')}
 
-ALERT DETAILS:
-- Alert Name: {labels.get('alertname', 'Unknown')}
-- Severity: {labels.get('severity', 'Unknown')}
-- Instance: {labels.get('instance', 'Unknown')}
-- Environment: {labels.get('environment', 'Unknown')}
-- Service: {labels.get('service', 'Unknown')}
-- Datacenter: {labels.get('datacenter', 'Unknown')}
-- Team: {labels.get('team', 'Unknown')}
-
-DETAILED DESCRIPTION (READ CAREFULLY):
+DESCRIPTION:
 {annotations.get('description', 'No description')}
 
-SUMMARY:
-{annotations.get('summary', 'No summary')}
+SUMMARY: {annotations.get('summary', 'No summary')}
 
-ANALYSIS REQUIREMENTS:
-- For "technical_reason": Extract the ACTUAL problem from description (e.g., "JVM heap exhausted 31.8GB/32GB", "max_connections=200 reached", "GC pauses 45+ seconds")
-- For "affected_component": List SPECIFIC servers/IPs from description (e.g., "kafka-prod-01 through kafka-prod-05 (10.0.3.10-14)")
-- For actions: Use SPECIFIC server names and commands (e.g., "Restart kafka-prod-01.company.internal", "Increase max_connections from 200 to 400 on db-prod-01")
-
-Respond with a valid JSON object:
+Respond with JSON:
 {{
   "root_cause": {{
-    "technical_reason": "COPY EXACT technical problem from THIS alert's description with actual metrics. Use ONLY terms that appear in the description. Examples: 'WiredTiger cache 8.2GB/8GB thrashing' (MongoDB), 'memory 63.8GB/64GB eviction policy ACTIVE' (Redis), 'max_connections=200 reached' (PostgreSQL). DO NOT use 'JVM heap' unless the description specifically mentions JVM.",
-    "affected_component": "LIST specific servers/IPs from THIS alert's description (e.g., 'mongo-primary-01 (10.3.2.10), mongo-secondary-01/02 (10.3.2.11/12)')",
-    "impact": "QUOTE business impact from THIS alert's description with exact numbers (e.g., '$52,000/hour revenue loss, 15,200 users affected')"
+    "technical_reason": "Extract EXACT problem with metrics from description (e.g., 'memory 63.8GB/64GB eviction ACTIVE' for Redis, 'WiredTiger 8.2GB/8GB' for MongoDB)",
+    "affected_component": "List specific servers/IPs from description",
+    "impact": "Quote business impact with numbers from description"
   }},
   "immediate_actions": [
     {{
-      "action": "SPECIFIC action with server names and commands (e.g., 'Restart JVM on kafka-prod-01 through kafka-prod-05 with -Xmx64g flag')",
-      "rationale": "EXPLAIN based on root cause from description",
+      "action": "Specific action with server name/command from description",
+      "rationale": "Why based on root cause",
       "estimated_time": "5-30 min",
       "priority": "high"
     }}
   ],
   "short_term_actions": [
     {{
-      "action": "Configuration change with specific values (e.g., 'Increase max_connections from 200 to 400 in postgresql.conf')",
-      "rationale": "Why this helps based on description",
+      "action": "Config change with specific values",
+      "rationale": "Why this helps",
       "estimated_time": "2-24 hours",
-      "priority": "medium/high"
+      "priority": "medium"
     }}
   ],
   "long_term_actions": [
     {{
-      "action": "Infrastructure improvement (e.g., 'Add 2 more Kafka brokers to distribute load')",
+      "action": "Infrastructure improvement",
       "rationale": "Prevent recurrence",
       "estimated_time": "1-7 days",
       "priority": "medium"
     }}
   ],
   "monitoring": {{
-    "key_metrics": ["EXTRACT from description: metrics to watch"],
-    "alert_threshold": "Specific threshold from description"
+    "key_metrics": ["Metrics to watch from description"],
+    "alert_threshold": "Threshold from description"
   }}
 }}
 
-MANDATORY RULES:
-1. Extract server names, IPs, metrics ONLY from THIS alert's description
-2. DO NOT give generic advice
-3. DO NOT use technical terms that don't appear in THIS alert's description
-4. DO NOT mix information from other alerts or use cached knowledge
-5. If description says "WiredTiger cache", use that term. If it says "memory exhausted", use that term. DO NOT substitute with different technology terms.
-
-VALIDATION CHECK: Before responding, verify that every technical term in your root_cause appears in the description above."""
+VERIFY: Every technical term in your response must appear in the description above."""
