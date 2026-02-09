@@ -228,7 +228,7 @@ func handleAlerts(c *gin.Context) {
 		severity := alert.Labels["severity"]
 		description := alert.Annotations["description"]
 
-		var alertID int
+		var alertID string
 		err := dbPool.QueryRow(ctx, `
 			INSERT INTO alerts (alert_name, severity, description, labels, annotations, starts_at, ends_at, generator_url)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)

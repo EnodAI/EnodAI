@@ -340,7 +340,7 @@ Query latest analysis results via REST API:
 curl http://localhost:8082/api/v1/analysis/latest
 ```
 
-**Response:**
+**Response (Improved Format):**
 ```json
 [
   {
@@ -349,12 +349,42 @@ curl http://localhost:8082/api/v1/analysis/latest
     "analysis_type": "llm_analysis",
     "model_name": "llama2",
     "analysis_data": {
-      "root_cause": "Memory leak in application process",
-      "mitigation": "Restart the affected service and monitor memory usage",
-      "analysis": "Critical CPU threshold exceeded due to memory pressure"
+      "root_cause": {
+        "technical_reason": "Memory leak in authentication service due to infinite loop",
+        "affected_component": "Authentication service",
+        "impact": "Slow response times and potential service downtime"
+      },
+      "immediate_actions": [
+        {
+          "action": "Restart authentication service instance",
+          "rationale": "Free up stuck memory immediately",
+          "estimated_time": "5-10 minutes",
+          "priority": "high"
+        }
+      ],
+      "short_term_actions": [
+        {
+          "action": "Increase maximum memory limit for the service",
+          "rationale": "Prevent immediate recurrence",
+          "estimated_time": "24-48 hours",
+          "priority": "medium"
+        }
+      ],
+      "long_term_actions": [
+        {
+          "action": "Implement memory profiling and leak detection",
+          "rationale": "Identify and fix root cause permanently",
+          "estimated_time": "1-7 days",
+          "priority": "low"
+        }
+      ],
+      "monitoring": {
+        "key_metrics": ["memory_usage", "gc_frequency"],
+        "alert_threshold": "Above 90% for more than 30 minutes"
+      }
     },
     "confidence_score": 0.85,
-    "created_at": "2024-02-07T10:05:00Z"
+    "created_at": "2026-02-09T10:05:00Z"
   }
 ]
 ```
