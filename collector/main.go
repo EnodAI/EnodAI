@@ -228,6 +228,13 @@ func handleAlerts(c *gin.Context) {
 		severity := alert.Labels["severity"]
 		description := alert.Annotations["description"]
 
+		// Validate and truncate description length (max 2000 chars for LLM context)
+		const maxDescriptionLength = 2000
+		if len(description) > maxDescriptionLength {
+			log.Printf("Alert description too long (%d chars), truncating to %d", len(description), maxDescriptionLength)
+			description = description[:maxDescriptionLength] + "\n\n[Description truncated for LLM processing]"
+		}
+
 		var alertID string
 		err := dbPool.QueryRow(ctx, `
 			INSERT INTO alerts (alert_name, severity, description, labels, annotations, starts_at, ends_at, generator_url)

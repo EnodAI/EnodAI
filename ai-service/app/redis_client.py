@@ -63,6 +63,52 @@ class RedisClient:
             except Exception as e:
                 logger.error(f"Failed to ACK message {message_id}: {e}")
 
+    async def cleanup_old_pending(self, max_idle_ms=300000):
+        """
+        Clean up old pending messages (older than 5 minutes by default)
+        These are messages that failed to process and are blocking the queue
+        """
+        if not self.redis:
+            return 0
+
+        try:
+            # Get pending messages info
+            pending_info = await self.redis.xpending(
+                self.settings.redis_stream,
+                self.settings.redis_group
+            )
+
+            if not pending_info or pending_info[0] == 0:
+                return 0
+
+            # Get detailed pending messages
+            pending_messages = await self.redis.xpending_range(
+                self.settings.redis_stream,
+                self.settings.redis_group,
+                min='-',
+                max='+',
+                count=100
+            )
+
+            cleaned = 0
+            for msg in pending_messages:
+                message_id = msg['message_id']
+                idle_time = msg['time_since_delivered']
+
+                # If message is stuck (idle > 5 minutes), acknowledge it
+                if idle_time > max_idle_ms:
+                    logger.warning(f"Cleaning up stuck message {message_id} (idle: {idle_time}ms)")
+                    await self.redis.xack(self.settings.redis_stream, self.settings.redis_group, message_id)
+                    cleaned += 1
+
+            if cleaned > 0:
+                logger.info(f"Cleaned up {cleaned} stuck pending messages")
+            return cleaned
+
+        except Exception as e:
+            logger.error(f"Error cleaning up pending messages: {e}")
+            return 0
+
     async def close(self):
         if self.redis:
             await self.redis.close()
@@ -94,8 +140,18 @@ class RedisConsumer:
         # Connect to Redis
         await self.client.connect()
 
+        # Cleanup counter for periodic pending message cleanup
+        cleanup_counter = 0
+        cleanup_interval = 50  # Clean up every 50 iterations (~5 seconds)
+
         while self.running:
             try:
+                # Periodic cleanup of stuck pending messages
+                cleanup_counter += 1
+                if cleanup_counter >= cleanup_interval:
+                    await self.client.cleanup_old_pending()
+                    cleanup_counter = 0
+
                 messages = await self.client.consume()
 
                 if not messages:
@@ -112,11 +168,12 @@ class RedisConsumer:
                                 detector,
                                 llm_analyzer
                             )
-                            # Acknowledge message
+                            # Acknowledge message ALWAYS (even on error, to avoid blocking)
                             await self.client.ack(message_id)
                         except Exception as e:
                             logger.error(f"Error processing message {message_id}: {e}")
-                            # Don't ACK failed messages, they'll be redelivered
+                            # ACK anyway to prevent blocking the queue
+                            await self.client.ack(message_id)
 
             except asyncio.CancelledError:
                 logger.info("Consumer task cancelled")
@@ -181,30 +238,73 @@ class RedisConsumer:
             logger.error(f"Metric processing error: {e}")
 
     async def _process_alert(self, alert_data: dict, llm_analyzer, pool):
-        """Process alert with LLM analysis"""
+        """Process alert with LLM analysis - with retry logic"""
+        alert_id = alert_data.get('alert_id')
+        payload = alert_data.get('payload', {})
+
+        # Check if analysis already exists (prevent duplicates)
         try:
-            alert_id = alert_data.get('alert_id')
-            payload = alert_data.get('payload', {})
-
-            # Perform LLM analysis
-            analysis = await llm_analyzer.analyze(payload)
-
-            logger.info(f"LLM analysis completed for alert {alert_id}")
-
-            # Store analysis result
             async with pool.acquire() as conn:
-                await conn.execute("""
-                    INSERT INTO ai_analysis_results
-                    (alert_id, analysis_type, model_name, analysis_data, confidence_score)
-                    VALUES ($1, 'llm_analysis', 'llama2', $2, $3)
-                """,
-                alert_id,
-                json.dumps(analysis),
-                0.85  # Default confidence for LLM analysis
+                existing = await conn.fetchval(
+                    "SELECT COUNT(*) FROM ai_analysis_results WHERE alert_id = $1 AND analysis_type = 'llm_analysis'",
+                    alert_id
                 )
-
+                if existing > 0:
+                    logger.info(f"Alert {alert_id} already analyzed, skipping")
+                    return
         except Exception as e:
-            logger.error(f"Alert processing error: {e}")
+            logger.error(f"Failed to check existing analysis: {e}")
+
+        # Retry logic for LLM analysis
+        max_retries = 2
+        retry_delay = 5
+
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"LLM analysis attempt {attempt + 1}/{max_retries} for alert {alert_id}")
+
+                # Perform LLM analysis with timeout
+                analysis = await llm_analyzer.analyze(payload)
+
+                # Check if analysis has error
+                if analysis.get('error'):
+                    raise Exception(f"LLM returned error: {analysis['error']}")
+
+                logger.info(f"LLM analysis completed for alert {alert_id}")
+
+                # Store analysis result
+                async with pool.acquire() as conn:
+                    await conn.execute("""
+                        INSERT INTO ai_analysis_results
+                        (alert_id, analysis_type, model_name, analysis_data, confidence_score)
+                        VALUES ($1, 'llm_analysis', 'llama2', $2, $3)
+                    """,
+                    alert_id,
+                    json.dumps(analysis),
+                    0.85
+                    )
+                return  # Success, exit retry loop
+
+            except Exception as e:
+                logger.error(f"Alert processing error (attempt {attempt + 1}): {e}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(retry_delay)
+                else:
+                    # Final failure - store error result
+                    logger.error(f"Failed to analyze alert {alert_id} after {max_retries} attempts")
+                    try:
+                        async with pool.acquire() as conn:
+                            await conn.execute("""
+                                INSERT INTO ai_analysis_results
+                                (alert_id, analysis_type, model_name, analysis_data, confidence_score)
+                                VALUES ($1, 'llm_analysis', 'llama2', $2, $3)
+                            """,
+                            alert_id,
+                            json.dumps({"error": f"Analysis failed after {max_retries} attempts: {str(e)}"}),
+                            0.0
+                            )
+                    except Exception as store_error:
+                        logger.error(f"Failed to store error result: {store_error}")
 
     async def stop(self):
         """Stop consuming messages"""
