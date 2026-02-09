@@ -301,6 +301,30 @@ class RedisConsumer:
                     0.85,
                     json.dumps({"analysis_reason": reason})
                     )
+
+                # AUTO-RESOLUTION: If recovery detected, mark previous higher-severity alerts as resolved
+                if reason == 'recovery':
+                    logger.info(f"Recovery analysis complete, marking previous alerts as resolved...")
+                    async with pool.acquire() as conn:
+                        resolved_count = await conn.fetchval("""
+                            UPDATE alerts
+                            SET status = 'resolved',
+                                ends_at = NOW(),
+                                updated_at = NOW()
+                            WHERE alert_name = $1
+                              AND labels->>'instance' = $2
+                              AND status = 'firing'
+                              AND id != $3
+                              AND created_at < (SELECT created_at FROM alerts WHERE id = $3)
+                            RETURNING id
+                        """,
+                        labels.get('alertname'),
+                        labels.get('instance'),
+                        alert_id
+                        )
+                        if resolved_count:
+                            logger.info(f"✅ Marked previous alert as resolved due to recovery")
+
                 return  # Success, exit retry loop
 
             except Exception as e:
