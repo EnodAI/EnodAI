@@ -77,7 +77,7 @@
             "datasource": {"type": "postgres", "uid": "PCC52D03280B7034C"},
             "editorMode": "code",
             "format": "table",
-            "rawSql": "SELECT COUNT(*) as value FROM metrics",
+            "rawSql": "SELECT COUNT(*) as value FROM metrics WHERE is_anomaly = TRUE",
             "refId": "A"
           }
         ],
@@ -128,26 +128,44 @@
         },
         "fieldConfig": {
           "defaults": {
-            "color": {"mode": "palette-classic"}
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 3},
+                {"color": "orange", "value": 10}
+              ]
+            },
+            "unit": "short",
+            "mappings": []
           }
         },
         "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0},
         "id": 4,
         "options": {
+          "colorMode": "background",
           "graphMode": "area",
-          "textMode": "value_and_name"
+          "textMode": "value_and_name",
+          "orientation": "auto",
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          }
         },
         "targets": [
           {
             "datasource": {"type": "postgres", "uid": "PCC52D03280B7034C"},
             "editorMode": "code",
             "format": "table",
-            "rawSql": "SELECT COUNT(*) as value FROM metrics",
+            "rawSql": "SELECT COUNT(*) as value FROM alerts WHERE is_duplicate = TRUE",
             "refId": "A"
           }
         ],
-        "title": "📊 Total Metrics Collected",
-        "type": "stat"
+        "title": "🔄 Duplicates Skipped",
+        "type": "stat",
+        "description": "Number of duplicate alerts skipped by smart deduplication. Each skipped alert = CPU time saved!"
       },
       {
         "datasource": {
