@@ -7,14 +7,14 @@ services:
     environment:
       POSTGRES_USER: enod_user
       POSTGRES_PASSWORD: enod_password
-      POSTGRES_DB: enod_alerts
+      POSTGRES_DB: enod_monitoring
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U enod_user -d enod_alerts"]
+      test: ["CMD-SHELL", "pg_isready -U enod_user -d enod_monitoring"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -62,7 +62,7 @@ services:
       - DB_HOST=postgresql
       - DB_USER=enod_user
       - DB_PASSWORD=enod_password
-      - DB_NAME=enod_alerts
+      - DB_NAME=enod_monitoring
       - REDIS_ADDR=redis:6379
     depends_on:
       postgresql:
@@ -82,7 +82,7 @@ services:
       - DB_HOST=postgresql
       - DB_USER=enod_user
       - DB_PASSWORD=enod_password
-      - DB_NAME=enod_alerts
+      - DB_NAME=enod_monitoring
       - REDIS_ADDR=redis
       - OLLAMA_URL=http://ollama:11434
     depends_on:
