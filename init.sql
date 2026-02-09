@@ -129,3 +129,12 @@ ON alerts(alert_name, ((labels->>'instance')), severity, created_at DESC);
 -- Comments
 COMMENT ON COLUMN alerts.is_duplicate IS 'True if this alert is a duplicate of another analyzed alert';
 COMMENT ON COLUMN alerts.reference_alert_id IS 'References the original alert that was analyzed (for duplicates)';
+
+-- Add reference_analysis_id to ai_analysis_results (for deduplication)
+ALTER TABLE ai_analysis_results 
+ADD COLUMN IF NOT EXISTS reference_analysis_id UUID REFERENCES ai_analysis_results(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_ai_analysis_reference 
+ON ai_analysis_results(reference_analysis_id);
+
+COMMENT ON COLUMN ai_analysis_results.reference_analysis_id IS 'References another analysis (for duplicate alerts)';

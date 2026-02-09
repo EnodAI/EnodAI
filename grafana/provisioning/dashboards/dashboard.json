@@ -187,10 +187,24 @@
                   "value": [
                     {
                       "options": {
-                        "critical": {"color": "red", "index": 0},
-                        "warning": {"color": "yellow", "index": 1}
+                        "pattern": "critical.*",
+                        "result": {"color": "red", "index": 0}
                       },
-                      "type": "value"
+                      "type": "regex"
+                    },
+                    {
+                      "options": {
+                        "pattern": "warning.*",
+                        "result": {"color": "orange", "index": 1}
+                      },
+                      "type": "regex"
+                    },
+                    {
+                      "options": {
+                        "pattern": "info.*",
+                        "result": {"color": "blue", "index": 2}
+                      },
+                      "type": "regex"
                     }
                   ]
                 }
@@ -213,7 +227,7 @@
             "datasource": {"type": "postgres", "uid": "PCC52D03280B7034C"},
             "editorMode": "code",
             "format": "table",
-            "rawSql": "WITH latest_analyses AS (SELECT DISTINCT ON (a.alert_name, a.labels->>'instance') a.id as alert_id, a.alert_name, a.severity, a.labels->>'instance' as instance, a.created_at, r.id as analysis_id, r.analysis_data, r.metadata, r.created_at as analysis_time, (SELECT COUNT(*) FROM alerts dup WHERE dup.alert_name = a.alert_name AND dup.labels->>'instance' = a.labels->>'instance' AND dup.created_at >= NOW() - INTERVAL '1 hour' AND (dup.is_duplicate = TRUE OR dup.id = a.id)) as dup_count FROM alerts a INNER JOIN ai_analysis_results r ON a.id = r.alert_id AND r.analysis_type = 'llm_analysis' WHERE a.is_duplicate = FALSE ORDER BY a.alert_name, a.labels->>'instance', a.created_at DESC) SELECT SUBSTRING(alert_id::text, 1, 8) as \"Case No\", alert_name as \"Alert\", CASE WHEN metadata::jsonb->>'analysis_reason' = 'recovery' THEN severity || ' ⭐' WHEN metadata::jsonb->>'analysis_reason' = 'escalation' THEN severity || ' 🔥' ELSE severity END as \"Severity\", instance as \"Instance\", dup_count as \"Count\", COALESCE(analysis_data::jsonb->'root_cause'->>'problem', analysis_data::jsonb->'root_cause'->>'recovery_status', 'Analysis in progress...') as \"Root Cause\", COALESCE(analysis_data::jsonb->'root_cause'->>'servers', '-') as \"Servers\", CASE WHEN analysis_data::jsonb ? 'immediate_actions' THEN (SELECT string_agg('STEP ' || (action->>'step') || ': ' || (action->>'action') || COALESCE(' [' || (action->>'command') || ']', '') || ' (' || (action->>'time') || ')', E'\\n\\n') FROM jsonb_array_elements(analysis_data::jsonb->'immediate_actions') AS action) ELSE 'Generating...' END as \"🚨 IMMEDIATE ACTIONS\", to_char(analysis_time, 'MM-DD HH24:MI') as \"Time\" FROM latest_analyses ORDER BY analysis_time DESC LIMIT 15",
+            "rawSql": "WITH latest_analyses AS (SELECT DISTINCT ON (a.alert_name, a.labels->>'instance') a.id as alert_id, a.alert_name, a.severity, a.labels->>'instance' as instance, a.created_at, r.id as analysis_id, r.analysis_data, r.metadata, r.created_at as analysis_time, (SELECT COUNT(*) FROM alerts dup WHERE dup.alert_name = a.alert_name AND dup.labels->>'instance' = a.labels->>'instance' AND dup.created_at >= NOW() - INTERVAL '1 hour' AND (dup.is_duplicate = TRUE OR dup.id = a.id)) as dup_count FROM alerts a INNER JOIN ai_analysis_results r ON a.id = r.alert_id AND r.analysis_type = 'llm_analysis' WHERE a.is_duplicate = FALSE ORDER BY a.alert_name, a.labels->>'instance', a.created_at DESC) SELECT SUBSTRING(alert_id::text, 1, 8) as \"Case No\", alert_name as \"Alert\", CASE WHEN metadata::jsonb->>'analysis_reason' = 'recovery' THEN severity || ' ⭐' WHEN metadata::jsonb->>'analysis_reason' = 'escalation' THEN severity || ' 🔥' ELSE severity END as \"Severity\", instance as \"Instance\", dup_count as \"Count\", COALESCE(analysis_data::jsonb->'root_cause'->>'problem', analysis_data::jsonb->'root_cause'->>'recovery_status', 'Analysis in progress...') as \"Root Cause\", CASE WHEN analysis_data::jsonb ? 'immediate_actions' THEN (SELECT string_agg('STEP ' || (action->>'step') || ': ' || (action->>'action') || COALESCE(' [' || (action->>'command') || ']', '') || ' (' || (action->>'time') || ')', E'\\n\\n') FROM jsonb_array_elements(analysis_data::jsonb->'immediate_actions') AS action) ELSE 'Generating...' END as \"🚨 IMMEDIATE ACTIONS\", to_char(analysis_time, 'MM-DD HH24:MI') as \"Time\" FROM latest_analyses ORDER BY analysis_time DESC LIMIT 15",
             "refId": "A"
           }
         ],

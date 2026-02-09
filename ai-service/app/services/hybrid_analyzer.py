@@ -72,6 +72,10 @@ class LLMAnalyzer:
         """
         labels = alert.get("labels", {})
         annotations = alert.get("annotations", {})
+        description = annotations.get('description', 'No description')
+
+        # Detect technology from alert to provide specific guidance
+        tech_hint = self._get_technology_hint(labels.get('alertname', ''), description)
 
         # Base prompt
         base = f"""You are a Senior SRE responding to a PRODUCTION EMERGENCY.
@@ -79,13 +83,14 @@ class LLMAnalyzer:
 CRITICAL RULES:
 1. Use ONLY info from THIS alert's description
 2. Extract EXACT server names, IPs, metrics from description
-3. Use correct tech terms: MongoDB=WiredTiger, Redis=memory/eviction, PostgreSQL=connections
+3. {tech_hint}
+4. NEVER suggest actions for technologies NOT mentioned in the description
 
 ALERT: {labels.get('alertname', 'Unknown')} | Severity: {labels.get('severity', 'Unknown')}
 Instance: {labels.get('instance', 'Unknown')}
 
 DESCRIPTION:
-{annotations.get('description', 'No description')}"""
+{description}"""
 
         # Context based on reason
         if reason == "recovery":
@@ -170,3 +175,51 @@ Respond ONLY with JSON:
 Focus: Give me 2-3 IMMEDIATE actions to fix this NOW. No future plans."""
 
         return base + context
+
+    def _get_technology_hint(self, alert_name: str, description: str) -> str:
+        """
+        Detect technology from alert name/description and provide specific guidance.
+        Returns technology-specific instructions to prevent mixing technologies.
+        """
+        alert_lower = alert_name.lower()
+        desc_lower = description.lower()
+
+        # Check for specific technologies
+        if 'redis' in alert_lower or 'redis' in desc_lower:
+            return "Technology: REDIS. Use Redis-specific terms: memory/eviction/keys/fragmentation. NO MongoDB/PostgreSQL commands!"
+
+        elif 'mongo' in alert_lower or 'mongo' in desc_lower:
+            return "Technology: MONGODB. Use MongoDB-specific terms: WiredTiger/collections/documents. NO Redis/PostgreSQL commands!"
+
+        elif 'postgres' in alert_lower or 'postgres' in desc_lower or 'postgresql' in alert_lower or 'postgresql' in desc_lower:
+            return "Technology: POSTGRESQL. Use PostgreSQL-specific terms: connections/queries/tables. NO Redis/MongoDB commands!"
+
+        elif 'mysql' in alert_lower or 'mysql' in desc_lower or 'mariadb' in alert_lower or 'mariadb' in desc_lower:
+            return "Technology: MYSQL. Use MySQL-specific terms: InnoDB/queries/tables/binlog. NO Redis/MongoDB/PostgreSQL commands!"
+
+        elif 'nginx' in alert_lower or 'nginx' in desc_lower:
+            return "Technology: NGINX. Use Nginx-specific terms: upstream/backend/proxy. NO database commands!"
+
+        elif 'kafka' in alert_lower or 'kafka' in desc_lower:
+            return "Technology: KAFKA. Use Kafka-specific terms: topics/partitions/consumer-lag/offsets. NO database commands!"
+
+        elif 'elasticsearch' in alert_lower or 'elastic' in desc_lower:
+            return "Technology: ELASTICSEARCH. Use ES-specific terms: shards/indices/heap/cluster. NO database commands!"
+
+        elif 'rabbitmq' in alert_lower or 'rabbitmq' in desc_lower:
+            return "Technology: RABBITMQ. Use RabbitMQ-specific terms: queues/exchanges/consumers. NO database commands!"
+
+        elif 'cassandra' in alert_lower or 'cassandra' in desc_lower:
+            return "Technology: CASSANDRA. Use Cassandra-specific terms: compaction/SSTables/keyspaces. NO Redis/MongoDB commands!"
+
+        elif 'disk' in alert_lower or 'disk' in desc_lower or 'filesystem' in alert_lower or 'storage' in desc_lower:
+            return "Focus on DISK/FILESYSTEM operations. Use disk-specific commands: df/du/fsck/resize2fs. Suggest cleanup based on files mentioned in description."
+
+        elif 'cpu' in alert_lower or 'cpu' in desc_lower or 'load' in alert_lower:
+            return "Focus on CPU/PROCESS operations. Use CPU-specific commands: top/htop/kill/nice. Analyze processes mentioned in description."
+
+        elif 'memory' in alert_lower or 'ram' in desc_lower or 'oom' in alert_lower:
+            return "Focus on MEMORY operations. Use memory-specific commands: free/vmstat/oom. Analyze memory consumers mentioned in description."
+
+        else:
+            return "Use ONLY technologies and commands mentioned in the alert description. DO NOT assume or add other technologies."
