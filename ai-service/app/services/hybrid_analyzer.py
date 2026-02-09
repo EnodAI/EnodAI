@@ -43,57 +43,42 @@ class LLMAnalyzer:
         labels = alert.get("labels", {})
         annotations = alert.get("annotations", {})
 
-        return f"""You are a Senior SRE analyzing a production alert.
+        return f"""You are a Senior SRE responding to a PRODUCTION EMERGENCY.
 
 CRITICAL RULES:
-1. Use ONLY information from THIS alert's description below
-2. Match technology terms EXACTLY (MongoDB=WiredTiger, Redis=memory/eviction, PostgreSQL=connections, Nginx=workers)
-3. Extract EXACT server names, IPs, and metrics from description
-4. If detail not in description, don't mention it
+1. Use ONLY info from THIS alert's description
+2. Extract EXACT server names, IPs, metrics from description
+3. Use correct tech terms: MongoDB=WiredTiger, Redis=memory/eviction, PostgreSQL=connections
 
-ALERT: {labels.get('alertname', 'Unknown')} | {labels.get('severity', 'Unknown')}
-Instance: {labels.get('instance', 'Unknown')} | Service: {labels.get('service', 'Unknown')}
+ALERT: {labels.get('alertname', 'Unknown')} | Severity: {labels.get('severity', 'Unknown')}
+Instance: {labels.get('instance', 'Unknown')}
 
 DESCRIPTION:
 {annotations.get('description', 'No description')}
 
-SUMMARY: {annotations.get('summary', 'No summary')}
-
-Respond with JSON:
+Respond ONLY with JSON:
 {{
   "root_cause": {{
-    "technical_reason": "Extract EXACT problem with metrics from description (e.g., 'memory 63.8GB/64GB eviction ACTIVE' for Redis, 'WiredTiger 8.2GB/8GB' for MongoDB)",
-    "affected_component": "List specific servers/IPs from description",
-    "impact": "Quote business impact with numbers from description"
+    "problem": "EXACT technical issue with metrics from description",
+    "servers": "Specific server names/IPs from description",
+    "impact": "Business impact from description"
   }},
   "immediate_actions": [
     {{
-      "action": "Specific action with server name/command from description",
-      "rationale": "Why based on root cause",
-      "estimated_time": "5-30 min",
-      "priority": "high"
-    }}
-  ],
-  "short_term_actions": [
+      "step": 1,
+      "action": "Specific command or action with server names",
+      "command": "Exact command to run (if applicable)",
+      "time": "5-15 min",
+      "critical": true
+    }},
     {{
-      "action": "Config change with specific values",
-      "rationale": "Why this helps",
-      "estimated_time": "2-24 hours",
-      "priority": "medium"
+      "step": 2,
+      "action": "Next immediate action",
+      "command": "Command if applicable",
+      "time": "10-20 min",
+      "critical": true
     }}
-  ],
-  "long_term_actions": [
-    {{
-      "action": "Infrastructure improvement",
-      "rationale": "Prevent recurrence",
-      "estimated_time": "1-7 days",
-      "priority": "medium"
-    }}
-  ],
-  "monitoring": {{
-    "key_metrics": ["Metrics to watch from description"],
-    "alert_threshold": "Threshold from description"
-  }}
+  ]
 }}
 
-VERIFY: Every technical term in your response must appear in the description above."""
+Focus: Give me 2-3 IMMEDIATE actions to fix this NOW. No future plans."""
