@@ -114,7 +114,7 @@
             "datasource": {"type": "postgres", "uid": "PCC52D03280B7034C"},
             "editorMode": "code",
             "format": "table",
-            "rawSql": "SELECT COUNT(*) as value FROM ai_analysis_results WHERE analysis_type = 'llm_analysis'",
+            "rawSql": "SELECT COUNT(*) as value FROM ai_analysis_results r INNER JOIN alerts a ON r.alert_id = a.id WHERE r.analysis_type = 'llm_analysis' AND a.status = 'firing'",
             "refId": "A"
           }
         ],
@@ -159,7 +159,7 @@
             "datasource": {"type": "postgres", "uid": "PCC52D03280B7034C"},
             "editorMode": "code",
             "format": "table",
-            "rawSql": "SELECT COUNT(*) as value FROM alerts WHERE is_duplicate = TRUE",
+            "rawSql": "SELECT COUNT(*) as value FROM alerts WHERE is_duplicate = TRUE AND status = 'firing'",
             "refId": "A"
           }
         ],
