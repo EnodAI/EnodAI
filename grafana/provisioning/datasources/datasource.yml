@@ -9,10 +9,13 @@ datasources:
   
   - name: PostgreSQL
     type: postgres
+    access: proxy
     url: postgresql:5432
-    database: enod_alerts
     user: enod_user
     secureJsonData:
       password: enod_password
     jsonData:
-      sslmode: "disable"
+      database: enod_monitoring
+      sslmode: disable
+      postgresVersion: 1500
+      timescaledb: false
