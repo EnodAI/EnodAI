@@ -1,0 +1,209 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "enodai-production",
+    "title": "EnodAI Production Dashboard",
+    "tags": ["enodai", "production"],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "fiscalYearStartMonth": 0,
+    "refresh": "30s",
+    "panels": [
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "dfcpezliqnyf4a"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "orange", "value": 1},
+                {"color": "red", "value": 3}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0},
+        "id": 1,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "textMode": "value_and_name"
+        },
+        "targets": [
+          {
+            "datasource": {"type": "postgres", "uid": "dfcpezliqnyf4a"},
+            "editorMode": "code",
+            "format": "table",
+            "rawSql": "SELECT COUNT(*) as value FROM alerts WHERE status = 'firing'",
+            "refId": "A",
+            "sql": {"columns": [{"parameters": [], "type": "function"}], "groupBy": [{"property": {"type": "string"}, "type": "groupBy"}], "limit": 50}
+          }
+        ],
+        "title": "🚨 Active Alerts",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "dfcpezliqnyf4a"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 10},
+                {"color": "red", "value": 30}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0},
+        "id": 2,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "textMode": "value_and_name"
+        },
+        "targets": [
+          {
+            "datasource": {"type": "postgres", "uid": "dfcpezliqnyf4a"},
+            "editorMode": "code",
+            "format": "table",
+            "rawSql": "SELECT COUNT(*) as value FROM metrics",
+            "refId": "A"
+          }
+        ],
+        "title": "🤖 AI Anomalies Detected",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "dfcpezliqnyf4a"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "blue", "value": null},
+                {"color": "green", "value": 5},
+                {"color": "purple", "value": 10}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0},
+        "id": 3,
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "textMode": "value_and_name"
+        },
+        "targets": [
+          {
+            "datasource": {"type": "postgres", "uid": "dfcpezliqnyf4a"},
+            "editorMode": "code",
+            "format": "table",
+            "rawSql": "SELECT COUNT(*) as value FROM ai_analysis_results WHERE analysis_type = 'llm_analysis'",
+            "refId": "A"
+          }
+        ],
+        "title": "🧠 LLM Analyses Completed",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "dfcpezliqnyf4a"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"}
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0},
+        "id": 4,
+        "options": {
+          "graphMode": "area",
+          "textMode": "value_and_name"
+        },
+        "targets": [
+          {
+            "datasource": {"type": "postgres", "uid": "dfcpezliqnyf4a"},
+            "editorMode": "code",
+            "format": "table",
+            "rawSql": "SELECT COUNT(*) as value FROM metrics",
+            "refId": "A"
+          }
+        ],
+        "title": "📊 Total Metrics Collected",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "dfcpezliqnyf4a"
+        },
+        "fieldConfig": {
+          "defaults": {},
+          "overrides": [
+            {
+              "matcher": {"id": "byName", "options": "Severity"},
+              "properties": [
+                {
+                  "id": "custom.cellOptions",
+                  "value": {"type": "color-background"}
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "critical": {"color": "red", "index": 0},
+                        "warning": {"color": "yellow", "index": 1}
+                      },
+                      "type": "value"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {"id": "byName", "options": "Case No"},
+              "properties": [{"id": "custom.width", "value": 120}]
+            }
+          ]
+        },
+        "gridPos": {"h": 40, "w": 24, "x": 0, "y": 8},
+        "id": 5,
+        "options": {
+          "cellHeight": "auto",
+          "showHeader": true
+        },
+        "targets": [
+          {
+            "datasource": {"type": "postgres", "uid": "dfcpezliqnyf4a"},
+            "editorMode": "code",
+            "format": "table",
+            "rawSql": "SELECT SUBSTRING(a.id::text, 1, 8) as \"Case No\", a.alert_name as \"Alert\", a.severity as \"Severity\", COALESCE(r.analysis_data::jsonb->'root_cause'->>'technical_reason', r.analysis_data::json->>'root_cause', 'Analysis in progress...') as \"Root Cause\", CASE WHEN r.analysis_data::jsonb ? 'immediate_actions' THEN (SELECT string_agg('• ' || (action->>'action') || ' (' || (action->>'estimated_time') || ', ' || UPPER(action->>'priority') || ')', E'\\n') FROM jsonb_array_elements(r.analysis_data::jsonb->'immediate_actions') AS action) ELSE COALESCE(r.analysis_data::json->>'mitigation', 'Generating...') END as \"🔴 Immediate (0-2h)\", CASE WHEN r.analysis_data::jsonb ? 'short_term_actions' THEN (SELECT string_agg('• ' || (action->>'action') || ' (' || (action->>'estimated_time') || ')', E'\\n') FROM jsonb_array_elements(r.analysis_data::jsonb->'short_term_actions') AS action LIMIT 3) ELSE NULL END as \"🟡 Short-Term (1-2d)\", CASE WHEN r.analysis_data::jsonb ? 'long_term_actions' THEN (SELECT string_agg('• ' || (action->>'action') || ' (' || (action->>'estimated_time') || ')', E'\\n') FROM jsonb_array_elements(r.analysis_data::jsonb->'long_term_actions') AS action LIMIT 3) ELSE NULL END as \"🟢 Long-Term (1-7d)\", to_char(r.created_at, 'YYYY-MM-DD HH24:MI:SS') as \"Time\" FROM ai_analysis_results r LEFT JOIN alerts a ON r.alert_id = a.id WHERE r.analysis_type = 'llm_analysis' ORDER BY r.created_at DESC LIMIT 20",
+            "refId": "A"
+          }
+        ],
+        "title": "🔍 AI Root Cause Analysis & Action Plan",
+        "type": "table"
+      }
+    ]
+  },
+  "folderUid": "",
+  "overwrite": true
+}

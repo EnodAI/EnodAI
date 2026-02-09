@@ -129,7 +129,24 @@ services:
       - prometheus
     networks:
       - enod-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
+
+  dashboard-provisioner:
+    build: ./grafana/scripts
+    container_name: enodai-dashboard-provisioner-1
+    volumes:
+      - ./grafana/provisioning/dashboards/dashboard.json:/dashboard.json:ro
+    depends_on:
+      grafana:
+        condition: service_healthy
+    networks:
+      - enod-net
+    restart: "no"
 
 networks:
   enod-net:
