@@ -904,6 +904,104 @@ Automated CI/CD with GitHub Actions:
 
 ---
 
+## 💻 Development
+
+### Code Changes and Rebuilding
+
+**IMPORTANT**: The `ai-service` and `collector` use Docker builds (not volume mounts). After editing code, you **MUST** rebuild the container for changes to take effect.
+
+#### Rebuilding a Single Service
+
+```bash
+# Rebuild and restart ai-service after code changes
+docker compose build ai-service && docker compose up -d ai-service
+
+# Rebuild and restart collector after code changes
+docker compose build collector && docker compose up -d collector
+```
+
+#### Rebuilding All Services
+
+```bash
+# Rebuild all services
+docker compose build
+
+# Restart with new builds
+docker compose up -d
+```
+
+#### Quick Development Workflow
+
+```bash
+# 1. Edit code in ai-service/app/
+vim ai-service/app/redis_client.py
+
+# 2. Rebuild the service
+docker compose build ai-service
+
+# 3. Restart the service
+docker compose up -d ai-service
+
+# 4. Watch logs to verify changes
+docker compose logs -f ai-service
+```
+
+### Development Tips
+
+**File Locations:**
+- Collector code: `./collector/`
+- AI Service code: `./ai-service/app/`
+- Database schema: `./init.sql`
+- Grafana dashboards: `./grafana/provisioning/dashboards/`
+
+**Common Commands:**
+```bash
+# Check running containers
+docker compose ps
+
+# View logs
+docker compose logs -f ai-service
+docker compose logs -f collector
+
+# Access database
+docker compose exec postgresql psql -U enod_user -d enod_monitoring
+
+# Access Redis CLI
+docker compose exec redis redis-cli
+
+# Run tests
+cd ai-service && pytest
+cd collector && go test ./...
+```
+
+**Configuration Files:**
+- `docker-compose.yml` - Service definitions
+- `ai-service/app/config.py` - AI Service settings
+- `collector/main.go` - Collector configuration
+
+### Test Scripts
+
+Run comprehensive tests:
+
+```bash
+# Stress test (deduplication + CPU throttling)
+./test_stress.sh
+
+# Technology-specific alerts
+./test_technologies.sh
+
+# Recovery detection
+./test_recovery.sh
+
+# Auto-resolution
+./test_auto_resolution.sh
+
+# Quick status check
+./test_check.sh
+```
+
+---
+
 ## 🤝 Contributing
 
 We welcome your contributions! Please follow these steps:
